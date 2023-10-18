@@ -8,6 +8,7 @@
     }
   },
   "dependencies": {
+    "@openzeppelin/cli": "^2.8.2",
     "@openzeppelin/contracts-upgradeable": "^4.9.3",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
@@ -25,7 +26,8 @@
     "deploy-local": "npx hardhat run ./scripts/deploy.js --network localhost  --config hardhat.local.config.js",
     "test": "npx hardhat test --network hardhat --config hardhat.local.config.js",
     "eject": "react-scripts eject",
-    "deploy": "npx hardhat run ./scripts/deploy.js --network goerli"
+    "deploy": "npx hardhat run ./scripts/deploy.js --network goerli",
+    "compile": "cd contracts && hardhat compile --config ../hardhat.local.config.js"
   },
   "eslintConfig": {
     "extends": [

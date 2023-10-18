@@ -206,9 +206,8 @@ Aqui proteção e sigilo de dados é lei (lei de proteção aos dados).
 
 + (plugin) - Marketing Place School Courses (Dependes on Marketing Place)
 
-    * NFT - Acess
+    * NFT - Access
     * Larning Plataform
-    *
 
 + (plugin) - Marketing Place Events
 
