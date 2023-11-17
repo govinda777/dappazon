@@ -2,7 +2,10 @@ Para criar um Modelo Entidade-Relacionamento (MER) de Smart Contracts, precisare
 
 Aqui está uma descrição geral do que cada um desses contratos poderia representar, com base em seus nomes:
 
-1. `Dappazon.sol` - Pode ser o contrato principal que lida com a lógica central da aplicação.
+1. `Dappazon.sol` - Contrato main, buy, 
+  function buy public payable
+  
+
 2. `DappzonToken.sol` - Este contrato pode ser responsável pela criação e gerenciamento do token da plataforma (se este for um sistema de token).
 3. `Order.sol` - Provavelmente gerencia a criação, modificação e rastreamento de pedidos dentro do sistema.
 4. `Payment_Method.sol` - Pode lidar com diferentes métodos de pagamento e integrações de pagamento.

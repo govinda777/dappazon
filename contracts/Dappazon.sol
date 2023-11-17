@@ -1,26 +1,17 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.9;
 
+import "./Product.sol";
+import "./Order.sol";
+
 contract Dappazon {
+
     address public owner;
+    IProduct.product public product;
+    Product public productContract;
+    IOrder.order public order;
 
-    struct Item {
-        uint256 id;
-        string name;
-        string category;
-        string image;
-        uint256 cost;
-        uint256 rating;
-        uint256 stock;
-    }
-
-    struct Order {
-        uint256 time;
-        Item item;
-    }
-
-    mapping(uint256 => Item) public items;
-    mapping(address => mapping(uint256 => Order)) public orders;
+    mapping(address => mapping(uint256 => IOrder.order)) public orders;
     mapping(address => uint256) public orderCount;
 
     event Buy(address buyer, uint256 orderId, uint256 itemId);
@@ -31,46 +22,17 @@ contract Dappazon {
         _;
     }
 
-    constructor() {
+    constructor(address _productAddress) {
         owner = msg.sender;
-    }
-
-    function list(
-        uint256 _id,
-        string memory _name,
-        string memory _category,
-        string memory _image,
-        uint256 _cost,
-        uint256 _rating,
-        uint256 _stock
-    ) public onlyOwner {
-        // Create Item
-        Item memory item = Item(
-            _id,
-            _name,
-            _category,
-            _image,
-            _cost,
-            _rating,
-            _stock
-        );
-
-        // Add Item to mapping
-        items[_id] = item;
-
-        // Emit event
-        emit List(_name, _cost, _stock);
+        productContract = Product(_productAddress);
     }
 
     function buy(uint256 _id) public payable {
         // Fetch item
-        Item memory item = items[_id];
-
-        // Require enough ether to buy item
-        require(msg.value >= item.cost);
-
-        // Require item is in stock
-        require(item.stock > 0);
+        product.ProductInfo memory product = productContract.read(_id);
+        
+        require(msg.value >= product.cost);
+        require(product.stock > 0);
 
         // Create order
         Order memory order = Order(block.timestamp, item);
@@ -79,8 +41,8 @@ contract Dappazon {
         orderCount[msg.sender]++; // <-- Order ID
         orders[msg.sender][orderCount[msg.sender]] = order;
 
-        // Subtract stock
-        items[_id].stock = item.stock - 1;
+        product.stock = product.stock - 1;
+        productContract.update(_id, product);
 
         // Emit event
         emit Buy(msg.sender, orderCount[msg.sender], item.id);
