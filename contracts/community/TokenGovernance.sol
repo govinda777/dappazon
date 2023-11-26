@@ -32,4 +32,13 @@ de contratos inteligentes na blockchain, garantindo transparência e
 execução automática das regras estabelecidas. É uma forma de alinhar 
 os interesses dos usuários com os da plataforma, pois quanto mais uma 
 pessoa investe e participa na plataforma, mais ela tem a ganhar ou perder 
-com as decisões tomadas.*/
+com as decisões tomadas.
+
+
+100 /
+
+33 - Socio a
+33 - Socio b
+33 - Socio c
+
+*/

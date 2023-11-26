@@ -3,18 +3,16 @@ pragma solidity ^0.8.9;
 
 import "./Product.sol";
 import "./Order.sol";
+import "./ShoppingCart.sol";
 
 contract Dappazon {
 
     address public owner;
-    IProduct.product public product;
-    Product public productContract;
-    IOrder.order public order;
+    IProduct public product;
+    IOrder public order;
+    IShoppingCart public shoppingCart;
 
-    mapping(address => mapping(uint256 => IOrder.order)) public orders;
-    mapping(address => uint256) public orderCount;
-
-    event Buy(address buyer, uint256 orderId, uint256 itemId);
+    event Buy(address buyer, uint256 orderId, uint256[] productIds);
     event List(string name, uint256 cost, uint256 quantity);
 
     modifier onlyOwner() {
@@ -22,32 +20,70 @@ contract Dappazon {
         _;
     }
 
-    constructor(address _productAddress) {
-        owner = msg.sender;
-        productContract = Product(_productAddress);
-    }
+    constructor(address _productAddress, 
+                address _orderAddress,
+                address _shoppingCartAddress) {
 
-    function buy(uint256 _id) public payable {
-        // Fetch item
-        product.ProductInfo memory product = productContract.read(_id);
+        owner = msg.sender;
+        product = Product(_productAddress);
+        order = Order(_orderAddress);
+        shoppingCart = ShoppingCart(_shoppingCartAddress);
+    }
+/*
+    function getProductIds(IItem.model[] memory items) internal pure returns (uint256[] memory) {
+
+        uint256[] memory _ids = new uint256[](items.length);
         
-        require(msg.value >= product.cost);
-        require(product.stock > 0);
+        for (uint256 i = 0; i < items.length; i++) {
+            _ids[i] = items[i].id;
+        }
+
+        return _ids;
+    }
+*/
+    function buy(uint256 shoppingCartId) public payable {
+        //Get shopping cart
+        IItem.model[] memory _shoppingCartInfo = shoppingCart.read(shoppingCartId);
+        // Fetch item
+        /*
+        uint256[] memory _produtcsId = getProductIds(_shoppingCartInfo.items);
+
+        
+        IProduct.model[] memory productsInfo = product.read(_produtcsId);
+        
+        validateShoppingCart(_shoppingCartInfo, productsInfo);
 
         // Create order
-        Order memory order = Order(block.timestamp, item);
-
+        uint256 orderId = order.create(IOrder.model({
+            time: block.timestamp,
+            productsInfo: productsInfo,
+            shoppingCartInfo: _shoppingCartInfo
+        }));
+        
         // Add order for user
-        orderCount[msg.sender]++; // <-- Order ID
-        orders[msg.sender][orderCount[msg.sender]] = order;
-
-        product.stock = product.stock - 1;
-        productContract.update(_id, product);
+        product.updateStock(productsInfo);
 
         // Emit event
-        emit Buy(msg.sender, orderCount[msg.sender], item.id);
+        emit Buy(msg.sender, orderId , _produtcsId);
+        */
     }
+/*
+    function validateShoppingCart(IShoppingCart.model memory _shoppingCartInfo, IProduct.model[] memory productsInfo) internal {
 
+        require(_shoppingCartInfo.items.length == productsInfo.length, "Shopping cart and products length must be equal");
+        
+        uint256 totalCost = 0;
+
+        for (uint256 i = 0; i < _shoppingCartInfo.items.length; i++) {
+            
+            totalCost += _shoppingCartInfo.items[i].cost * _shoppingCartInfo.items[i].quantity;
+
+            require(productsInfo[i].stock >= _shoppingCartInfo.items[i].quantity, "Insufficient stock");
+        }
+
+        require(msg.value >= totalCost);
+    }
+*/
     function withdraw() public onlyOwner {
         (bool success, ) = owner.call{value: address(this).balance}("");
         require(success);
