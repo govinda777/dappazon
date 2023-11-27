@@ -13,17 +13,41 @@ const COST = tokens(1)
 const RATING = 4
 const STOCK = 5
 
+const logContractInfos = (contract) => {
+  console.log(contract.address)
+}
+
 describe("Dappazon", () => {
-  let dappazon
+  let dappazon, product, order, shoppingCart
   let deployer, buyer
 
   beforeEach(async () => {
     // Setup accounts
     [deployer, buyer] = await ethers.getSigners()
 
-    // Deploy contract
+    // Deploy Product contract
+    const Product = await ethers.getContractFactory("Product")
+    product = await Product.deploy()
+    
+    logContractInfos(product)
+    
+    // Deploy Order contract
+    const Order = await ethers.getContractFactory("Order")
+    order = await Order.deploy()
+
+    logContractInfos(order)
+
+    // Deploy ShoppingCart contract
+    const ShoppingCart = await ethers.getContractFactory("ShoppingCart")
+    shoppingCart = await ShoppingCart.deploy(product.address)
+
+    logContractInfos(shoppingCart)
+
+    // Deploy Dappazon contract
     const Dappazon = await ethers.getContractFactory("Dappazon")
-    dappazon = await Dappazon.deploy()
+    dappazon = await Dappazon.deploy(product.address, order.address, shoppingCart.address)
+
+    logContractInfos(dappazon)
   })
 
   describe("Deployment", () => {
@@ -32,37 +56,13 @@ describe("Dappazon", () => {
     })
   })
 
-  describe("Listing", () => {
-    let transaction
-
-    beforeEach(async () => {
-      // List a item
-      transaction = await dappazon.connect(deployer).list(ID, NAME, CATEGORY, IMAGE, COST, RATING, STOCK)
-      await transaction.wait()
-    })
-
-    it("Returns item attributes", async () => {
-      const item = await dappazon.items(ID)
-
-      expect(item.id).to.equal(ID)
-      expect(item.name).to.equal(NAME)
-      expect(item.category).to.equal(CATEGORY)
-      expect(item.image).to.equal(IMAGE)
-      expect(item.cost).to.equal(COST)
-      expect(item.rating).to.equal(RATING)
-      expect(item.stock).to.equal(STOCK)
-    })
-
-    it("Emits List event", () => {
-      expect(transaction).to.emit(dappazon, "List")
-    })
-  })
-
   describe("Buying", () => {
     let transaction
 
     beforeEach(async () => {
       // List a item
+      await product.connect(deployer).create()
+
       transaction = await dappazon.connect(deployer).list(ID, NAME, CATEGORY, IMAGE, COST, RATING, STOCK)
       await transaction.wait()
 

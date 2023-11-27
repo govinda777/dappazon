@@ -11,8 +11,11 @@ interface IOrder {
         uint256 shoppingCartId;
     }
 
-    //function create(IOrder.model memory _order, IProduct.model[] memory _products) external returns (uint256);
+    event OrderCreated(address buyer, uint256 orderId, uint256[] productIds);
+
+    function create(uint256 _shoppingCartId, uint256[] memory _products) external returns (uint256);
     function read(uint256 _id) external view returns (IOrder.model memory);
+    function readProducts(uint256 _orderId) external view returns (uint256[] memory);
     function update(uint256 _id, IOrder.model memory _order) external;
 }
 
@@ -32,15 +35,24 @@ contract Order is IOrder {
         owner = msg.sender;
     }
 
-    function create(IOrder.model memory _order, uint256[] memory _productsIds) public returns (uint256) {
+    function create(uint256 _shoppingCartId, uint256[] memory _productsIds) public returns (uint256) {
         orderCount[msg.sender]++;
-        _orders[msg.sender][orderCount[msg.sender]] = _order;
+
+        _orders[msg.sender][orderCount[msg.sender]] = IOrder.model(_shoppingCartId);
+        
         _ordersProducts[msg.sender][orderCount[msg.sender]] = _productsIds;
+
+        emit OrderCreated(msg.sender, orderCount[msg.sender], _productsIds);
+
         return orderCount[msg.sender];
     }
 
     function read(uint256 _id) public view returns (IOrder.model memory) {
         return _orders[msg.sender][_id];
+    }
+
+    function readProducts(uint256 _orderId) public view returns (uint256[] memory) {
+        return _ordersProducts[msg.sender][_orderId];
     }
 
     function update(uint256 _id, IOrder.model memory _order) public {
