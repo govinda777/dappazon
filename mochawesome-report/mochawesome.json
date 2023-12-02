@@ -1,0 +1,663 @@
+{
+  "stats": {
+    "suites": 10,
+    "tests": 13,
+    "passes": 8,
+    "pending": 0,
+    "failures": 5,
+    "start": "2023-12-02T20:35:41.064Z",
+    "end": "2023-12-02T20:35:42.342Z",
+    "duration": 1278,
+    "testsRegistered": 15,
+    "passPercent": 53.333333333333336,
+    "pendingPercent": 0,
+    "other": 1,
+    "hasOther": true,
+    "skipped": 2,
+    "hasSkipped": true
+  },
+  "results": [
+    {
+      "uuid": "8937c34a-79ad-4839-a2bc-6d936727ecd9",
+      "title": "",
+      "fullFile": "",
+      "file": "",
+      "beforeHooks": [],
+      "afterHooks": [],
+      "tests": [],
+      "suites": [
+        {
+          "uuid": "603eed09-e6e8-4f08-be9c-f7bd3cff3916",
+          "title": "Dappazon",
+          "fullFile": "/Users/gosouza/projeto/dappazon/test/Dappazon.js",
+          "file": "/test/Dappazon.js",
+          "beforeHooks": [
+            {
+              "title": "\"before each\" hook in \"Dappazon\"",
+              "fullTitle": "Dappazon \"before each\" hook in \"Dappazon\"",
+              "timedOut": false,
+              "duration": 54,
+              "state": null,
+              "speed": null,
+              "pass": false,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "// Setup accounts\n[deployer, buyer] = await ethers.getSigners()\nconst Product = await ethers.getContractFactory(\"Product\")\nproduct = await Product.deploy()\n\nconsole.log(`Product: ${product.address}`)\n\nconst Order = await ethers.getContractFactory(\"Order\")\norder = await Order.deploy()\nconsole.log(`Order: ${order.address}`)\nconst ShoppingCart = await ethers.getContractFactory(\"ShoppingCart\")\nshoppingCart = await ShoppingCart.deploy(product.address)\nconsole.log(`ShoppingCart: ${shoppingCart.address}`)\nconst Dappazon = await ethers.getContractFactory(\"Dappazon\")\ndappazon = await Dappazon.deploy(product.address, order.address, shoppingCart.address)\nconsole.log(`Dappazon: ${dappazon.address}`)",
+              "err": {},
+              "uuid": "9f8ffe52-0498-44bd-b803-77cb678509c1",
+              "parentUUID": "603eed09-e6e8-4f08-be9c-f7bd3cff3916",
+              "isHook": true,
+              "skipped": false
+            }
+          ],
+          "afterHooks": [],
+          "tests": [],
+          "suites": [
+            {
+              "uuid": "7cf7004b-9746-4f68-8d80-907ef8fc9a5e",
+              "title": "Deployment",
+              "fullFile": "/Users/gosouza/projeto/dappazon/test/Dappazon.js",
+              "file": "/test/Dappazon.js",
+              "beforeHooks": [],
+              "afterHooks": [],
+              "tests": [
+                {
+                  "title": "Sets the owner",
+                  "fullTitle": "Dappazon Deployment Sets the owner",
+                  "timedOut": false,
+                  "duration": 9,
+                  "state": "passed",
+                  "speed": "fast",
+                  "pass": true,
+                  "fail": false,
+                  "pending": false,
+                  "context": null,
+                  "code": "expect(await dappazon.owner()).to.equal(deployer.address)",
+                  "err": {},
+                  "uuid": "8e0be980-2909-47c0-8ec3-bf3058247b1b",
+                  "parentUUID": "7cf7004b-9746-4f68-8d80-907ef8fc9a5e",
+                  "isHook": false,
+                  "skipped": false
+                }
+              ],
+              "suites": [],
+              "passes": [
+                "8e0be980-2909-47c0-8ec3-bf3058247b1b"
+              ],
+              "failures": [],
+              "pending": [],
+              "skipped": [],
+              "duration": 9,
+              "root": false,
+              "rootEmpty": false,
+              "_timeout": 40000
+            },
+            {
+              "uuid": "0d0389ac-42f0-4483-82c7-990b33d10f43",
+              "title": "Buying",
+              "fullFile": "/Users/gosouza/projeto/dappazon/test/Dappazon.js",
+              "file": "/test/Dappazon.js",
+              "beforeHooks": [
+                {
+                  "title": "\"before each\" hook in \"Buying\"",
+                  "fullTitle": "Dappazon Buying \"before each\" hook in \"Buying\"",
+                  "timedOut": false,
+                  "duration": 0,
+                  "state": null,
+                  "speed": null,
+                  "pass": false,
+                  "fail": false,
+                  "pending": false,
+                  "context": null,
+                  "code": "productInfo = createNewProduct()\nshoppingCartInfo = createNewShoppingCart(productInfo)",
+                  "err": {},
+                  "uuid": "e59ad761-d86d-4239-821f-a4a1617140ec",
+                  "parentUUID": "0d0389ac-42f0-4483-82c7-990b33d10f43",
+                  "isHook": true,
+                  "skipped": false
+                }
+              ],
+              "afterHooks": [],
+              "tests": [
+                {
+                  "title": "Updates buyer's order count",
+                  "fullTitle": "Dappazon Buying Updates buyer's order count",
+                  "timedOut": false,
+                  "duration": 0,
+                  "state": "failed",
+                  "speed": null,
+                  "pass": false,
+                  "fail": true,
+                  "pending": false,
+                  "context": null,
+                  "code": "const result = await dappazon.orderCount(buyer.address)\nexpect(result).to.equal(1)",
+                  "err": {
+                    "message": "TypeError: dappazon.orderCount is not a function",
+                    "estack": "TypeError: dappazon.orderCount is not a function\n    at Context.<anonymous> (test/Dappazon.js:73:37)",
+                    "diff": null
+                  },
+                  "uuid": "45089137-1091-4e1f-bdcc-0cd8812562b7",
+                  "parentUUID": "0d0389ac-42f0-4483-82c7-990b33d10f43",
+                  "isHook": false,
+                  "skipped": false
+                },
+                {
+                  "title": "Adds the order",
+                  "fullTitle": "Dappazon Buying Adds the order",
+                  "timedOut": false,
+                  "duration": 0,
+                  "state": "failed",
+                  "speed": null,
+                  "pass": false,
+                  "fail": true,
+                  "pending": false,
+                  "context": null,
+                  "code": "const order = await dappazon.orders(buyer.address, 1)\nexpect(order.time).to.be.greaterThan(0)\nexpect(order.item.name).to.equal(NAME)",
+                  "err": {
+                    "message": "TypeError: dappazon.orders is not a function",
+                    "estack": "TypeError: dappazon.orders is not a function\n    at Context.<anonymous> (test/Dappazon.js:78:36)",
+                    "diff": null
+                  },
+                  "uuid": "673cde6a-2171-4b29-b9c2-2abbaf62e1f8",
+                  "parentUUID": "0d0389ac-42f0-4483-82c7-990b33d10f43",
+                  "isHook": false,
+                  "skipped": false
+                },
+                {
+                  "title": "Updates the contract balance",
+                  "fullTitle": "Dappazon Buying Updates the contract balance",
+                  "timedOut": false,
+                  "duration": 2,
+                  "state": "failed",
+                  "speed": null,
+                  "pass": false,
+                  "fail": true,
+                  "pending": false,
+                  "context": null,
+                  "code": "const result = await ethers.provider.getBalance(dappazon.address)\nexpect(result).to.equal(COST)",
+                  "err": {
+                    "message": "ReferenceError: COST is not defined",
+                    "estack": "ReferenceError: COST is not defined\n    at Context.<anonymous> (test/Dappazon.js:86:31)\n    at processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at runNextTicks (node:internal/process/task_queues:64:3)\n    at listOnTimeout (node:internal/timers:540:9)\n    at processTimers (node:internal/timers:514:7)",
+                    "diff": null
+                  },
+                  "uuid": "dbef350a-6c15-416f-a6a2-b92e4b116a97",
+                  "parentUUID": "0d0389ac-42f0-4483-82c7-990b33d10f43",
+                  "isHook": false,
+                  "skipped": false
+                },
+                {
+                  "title": "Emits Buy event",
+                  "fullTitle": "Dappazon Buying Emits Buy event",
+                  "timedOut": false,
+                  "duration": 0,
+                  "state": "passed",
+                  "speed": "fast",
+                  "pass": true,
+                  "fail": false,
+                  "pending": false,
+                  "context": null,
+                  "code": "expect(transaction).to.emit(dappazon, \"Buy\")",
+                  "err": {},
+                  "uuid": "28c0fae8-d9c2-4a7b-920f-442462d9ec30",
+                  "parentUUID": "0d0389ac-42f0-4483-82c7-990b33d10f43",
+                  "isHook": false,
+                  "skipped": false
+                }
+              ],
+              "suites": [],
+              "passes": [
+                "28c0fae8-d9c2-4a7b-920f-442462d9ec30"
+              ],
+              "failures": [
+                "45089137-1091-4e1f-bdcc-0cd8812562b7",
+                "673cde6a-2171-4b29-b9c2-2abbaf62e1f8",
+                "dbef350a-6c15-416f-a6a2-b92e4b116a97"
+              ],
+              "pending": [],
+              "skipped": [],
+              "duration": 2,
+              "root": false,
+              "rootEmpty": false,
+              "_timeout": 40000
+            },
+            {
+              "uuid": "7c194671-1fa9-4987-b53f-917cfe614e66",
+              "title": "Withdrawing",
+              "fullFile": "/Users/gosouza/projeto/dappazon/test/Dappazon.js",
+              "file": "/test/Dappazon.js",
+              "beforeHooks": [
+                {
+                  "title": "\"before each\" hook for \"Updates the owner balance\"",
+                  "fullTitle": "Dappazon Withdrawing \"before each\" hook for \"Updates the owner balance\"",
+                  "timedOut": false,
+                  "duration": 1,
+                  "state": "failed",
+                  "speed": null,
+                  "pass": false,
+                  "fail": true,
+                  "pending": false,
+                  "context": null,
+                  "code": "// List a item\nlet transaction = await dappazon.connect(deployer).list(ID, NAME, CATEGORY, IMAGE, COST, RATING, STOCK)\nawait transaction.wait()\n// Buy a item\ntransaction = await dappazon.connect(buyer).buy(ID, { value: COST })\nawait transaction.wait()\n// Get Deployer balance before\nbalanceBefore = await ethers.provider.getBalance(deployer.address)\n// Withdraw\ntransaction = await dappazon.connect(deployer).withdraw()\nawait transaction.wait()",
+                  "err": {
+                    "message": "ReferenceError: ID is not defined",
+                    "estack": "ReferenceError: ID is not defined\n    at Context.<anonymous> (test/Dappazon.js:99:63)\n    at processImmediate (node:internal/timers:478:21)",
+                    "diff": null
+                  },
+                  "uuid": "331468f9-6483-4073-a1fe-6fe1e2f6afc7",
+                  "parentUUID": "7c194671-1fa9-4987-b53f-917cfe614e66",
+                  "isHook": true,
+                  "skipped": false
+                }
+              ],
+              "afterHooks": [],
+              "tests": [
+                {
+                  "title": "Updates the owner balance",
+                  "fullTitle": "Dappazon Withdrawing Updates the owner balance",
+                  "timedOut": false,
+                  "duration": 0,
+                  "state": null,
+                  "speed": null,
+                  "pass": false,
+                  "fail": false,
+                  "pending": false,
+                  "context": null,
+                  "code": "const balanceAfter = await ethers.provider.getBalance(deployer.address)\nexpect(balanceAfter).to.be.greaterThan(balanceBefore)",
+                  "err": {},
+                  "uuid": "e38bd09d-ec24-44c1-b642-9705be10e55a",
+                  "parentUUID": "7c194671-1fa9-4987-b53f-917cfe614e66",
+                  "isHook": false,
+                  "skipped": true
+                },
+                {
+                  "title": "Updates the contract balance",
+                  "fullTitle": "Dappazon Withdrawing Updates the contract balance",
+                  "timedOut": false,
+                  "duration": 0,
+                  "state": null,
+                  "speed": null,
+                  "pass": false,
+                  "fail": false,
+                  "pending": false,
+                  "context": null,
+                  "code": "const result = await ethers.provider.getBalance(dappazon.address)\nexpect(result).to.equal(0)",
+                  "err": {},
+                  "uuid": "7063fade-a58f-4983-a6de-6f3e80f254f3",
+                  "parentUUID": "7c194671-1fa9-4987-b53f-917cfe614e66",
+                  "isHook": false,
+                  "skipped": true
+                }
+              ],
+              "suites": [],
+              "passes": [],
+              "failures": [],
+              "pending": [],
+              "skipped": [
+                "e38bd09d-ec24-44c1-b642-9705be10e55a",
+                "7063fade-a58f-4983-a6de-6f3e80f254f3"
+              ],
+              "duration": 0,
+              "root": false,
+              "rootEmpty": false,
+              "_timeout": 40000
+            }
+          ],
+          "passes": [],
+          "failures": [],
+          "pending": [],
+          "skipped": [],
+          "duration": 0,
+          "root": false,
+          "rootEmpty": false,
+          "_timeout": 40000
+        },
+        {
+          "uuid": "5978063a-69e6-4933-9da0-fc0e7ad6621e",
+          "title": "Product",
+          "fullFile": "/Users/gosouza/projeto/dappazon/test/Product.js",
+          "file": "/test/Product.js",
+          "beforeHooks": [
+            {
+              "title": "\"before each\" hook in \"Product\"",
+              "fullTitle": "Product \"before each\" hook in \"Product\"",
+              "timedOut": false,
+              "duration": 11,
+              "state": null,
+              "speed": null,
+              "pass": false,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "[owner] = await ethers.getSigners();\nProduct = await ethers.getContractFactory(\"Product\");\nproduct = await Product.deploy();",
+              "err": {},
+              "uuid": "22fd9d04-b510-4512-b86f-abd1e4c682a1",
+              "parentUUID": "5978063a-69e6-4933-9da0-fc0e7ad6621e",
+              "isHook": true,
+              "skipped": false
+            }
+          ],
+          "afterHooks": [],
+          "tests": [],
+          "suites": [
+            {
+              "uuid": "073df1c1-594a-4966-bcd0-d674cdbb3bf8",
+              "title": "Deployment",
+              "fullFile": "/Users/gosouza/projeto/dappazon/test/Product.js",
+              "file": "/test/Product.js",
+              "beforeHooks": [],
+              "afterHooks": [],
+              "tests": [
+                {
+                  "title": "Should set the right owner",
+                  "fullTitle": "Product Deployment Should set the right owner",
+                  "timedOut": false,
+                  "duration": 5,
+                  "state": "passed",
+                  "speed": "fast",
+                  "pass": true,
+                  "fail": false,
+                  "pending": false,
+                  "context": null,
+                  "code": "expect(await product.owner()).to.equal(owner.address);",
+                  "err": {},
+                  "uuid": "92fd7901-4abd-4108-b3b4-528996f58f42",
+                  "parentUUID": "073df1c1-594a-4966-bcd0-d674cdbb3bf8",
+                  "isHook": false,
+                  "skipped": false
+                }
+              ],
+              "suites": [],
+              "passes": [
+                "92fd7901-4abd-4108-b3b4-528996f58f42"
+              ],
+              "failures": [],
+              "pending": [],
+              "skipped": [],
+              "duration": 5,
+              "root": false,
+              "rootEmpty": false,
+              "_timeout": 40000
+            },
+            {
+              "uuid": "3dc5b788-7cc8-4173-a6c6-207667153878",
+              "title": "Product management",
+              "fullFile": "/Users/gosouza/projeto/dappazon/test/Product.js",
+              "file": "/test/Product.js",
+              "beforeHooks": [],
+              "afterHooks": [],
+              "tests": [
+                {
+                  "title": "Should create a product and emit event with correct data",
+                  "fullTitle": "Product Product management Should create a product and emit event with correct data",
+                  "timedOut": false,
+                  "duration": 10,
+                  "state": "passed",
+                  "speed": "fast",
+                  "pass": true,
+                  "fail": false,
+                  "pending": false,
+                  "context": null,
+                  "code": "const productData = { cost: 100, rating: 5, stock: 10 };\n  \n// Envia a transação e espera pela confirmação\nconst tx = await product.create(productData);\nconst receipt = await tx.wait();\n  \n// Procura pelo evento ProductCreated no recibo da transação\nconst ProductCreatedEvent = receipt.events.find(event => event.event === 'ProductCreated');\n  \nconst createdProduct = await product.read(ProductCreatedEvent.args.id);\nexpect(createdProduct.cost).to.equal(productData.cost);\nexpect(createdProduct.rating).to.equal(productData.rating);\nexpect(createdProduct.stock).to.equal(productData.stock);\n// Verifica os dados do evento\nexpect(ProductCreatedEvent.args.id).to.equal(1);\nexpect(ProductCreatedEvent.args.product.cost).to.equal(productData.cost);\nexpect(ProductCreatedEvent.args.product.rating).to.equal(productData.rating);\nexpect(ProductCreatedEvent.args.product.stock).to.equal(productData.stock);",
+                  "err": {},
+                  "uuid": "1796e7e1-0542-42f8-bac6-82871d1ef828",
+                  "parentUUID": "3dc5b788-7cc8-4173-a6c6-207667153878",
+                  "isHook": false,
+                  "skipped": false
+                },
+                {
+                  "title": "Should update a product and emit event with correct data",
+                  "fullTitle": "Product Product management Should update a product and emit event with correct data",
+                  "timedOut": false,
+                  "duration": 16,
+                  "state": "passed",
+                  "speed": "fast",
+                  "pass": true,
+                  "fail": false,
+                  "pending": false,
+                  "context": null,
+                  "code": "await product.create({ cost: 100, rating: 5, stock: 10 });\n\nconst productDataUpdate = { cost: 200, rating: 4, stock: 5 }\n\nconst tx = await product.update(1, productDataUpdate);\nconst receipt = await tx.wait();\n// Procura pelo evento ProductCreated no recibo da transação\nconst ProductUpdated = receipt.events.find(event => event.event === 'ProductUpdated');\n\nexpect(ProductUpdated.args.id).to.equal(1);\nexpect(ProductUpdated.args.product.cost).to.equal(productDataUpdate.cost);\nexpect(ProductUpdated.args.product.rating).to.equal(productDataUpdate.rating);\nexpect(ProductUpdated.args.product.stock).to.equal(productDataUpdate.stock);\nconst updatedProduct = await product.read(1);\nexpect(updatedProduct.cost).to.equal(200);\nexpect(updatedProduct.rating).to.equal(4);\nexpect(updatedProduct.stock).to.equal(5);",
+                  "err": {},
+                  "uuid": "ffbade87-cc7b-4ffd-89ab-779e2dfea98a",
+                  "parentUUID": "3dc5b788-7cc8-4173-a6c6-207667153878",
+                  "isHook": false,
+                  "skipped": false
+                },
+                {
+                  "title": "Should update stock a product and emit event with correct data",
+                  "fullTitle": "Product Product management Should update stock a product and emit event with correct data",
+                  "timedOut": false,
+                  "duration": 17,
+                  "state": "passed",
+                  "speed": "fast",
+                  "pass": true,
+                  "fail": false,
+                  "pending": false,
+                  "context": null,
+                  "code": "const productData = { \n  cost: ethers.BigNumber.from(100), \n  rating: ethers.BigNumber.from(5), \n  stock: ethers.BigNumber.from(10) \n}\nawait product.create(productData);\nconst productDataUpdateStock = [{ \n  productId: ethers.BigNumber.from(1), \n  cost: ethers.BigNumber.from(200), \n  rating: ethers.BigNumber.from(5), \n  quantity: ethers.BigNumber.from(2) \n}]\n\nconst receipt = await product.updateStock(productDataUpdateStock)\n.then(tx => tx.wait());;\n\n// Procura pelo evento ProductCreated no recibo da transação\nconst shoppingCartProducts = util.getEvents(receipt, 'ProductUpdateStock').args.shoppingCartProducts;\n    \nexpect(shoppingCartProducts[0][\"productId\"] instanceof BigNumber)\nexpect(shoppingCartProducts[0][\"productId\"]).to.equal(productDataUpdateStock[0].productId)\nexpect(util.isGreaterThan(shoppingCartProducts[0][\"quantity\"], productDataUpdateStock[0].quantity))\nconst updatedProduct = await product.read(1);\nexpect(updatedProduct.cost).to.equal(productData.cost);\nexpect(updatedProduct.rating).to.equal(productData.rating);\nexpect(updatedProduct.stock).to.equal(productData.stock - productDataUpdateStock[0].quantity);",
+                  "err": {},
+                  "uuid": "52b13666-f72d-4bec-91d0-a097c4f3b351",
+                  "parentUUID": "3dc5b788-7cc8-4173-a6c6-207667153878",
+                  "isHook": false,
+                  "skipped": false
+                },
+                {
+                  "title": "Should delete a product and emit event with correct data",
+                  "fullTitle": "Product Product management Should delete a product and emit event with correct data",
+                  "timedOut": false,
+                  "duration": 13,
+                  "state": "passed",
+                  "speed": "fast",
+                  "pass": true,
+                  "fail": false,
+                  "pending": false,
+                  "context": null,
+                  "code": "await product.create({ cost: 100, rating: 5, stock: 10 });\n\nconst tx = await product.del(1);\nconst receipt = await tx.wait();\nconst ProductDeleted = receipt.events.find(event => event.event === 'ProductDeleted');\nexpect(ProductDeleted.args.id).to.equal(1);\nconst result = await product.read(1);\nexpect(result.cost).to.equal(ethers.constants.Zero);",
+                  "err": {},
+                  "uuid": "f5cd9987-678e-4602-bc3b-444d0d381c08",
+                  "parentUUID": "3dc5b788-7cc8-4173-a6c6-207667153878",
+                  "isHook": false,
+                  "skipped": false
+                }
+              ],
+              "suites": [],
+              "passes": [
+                "1796e7e1-0542-42f8-bac6-82871d1ef828",
+                "ffbade87-cc7b-4ffd-89ab-779e2dfea98a",
+                "52b13666-f72d-4bec-91d0-a097c4f3b351",
+                "f5cd9987-678e-4602-bc3b-444d0d381c08"
+              ],
+              "failures": [],
+              "pending": [],
+              "skipped": [],
+              "duration": 56,
+              "root": false,
+              "rootEmpty": false,
+              "_timeout": 40000
+            }
+          ],
+          "passes": [],
+          "failures": [],
+          "pending": [],
+          "skipped": [],
+          "duration": 0,
+          "root": false,
+          "rootEmpty": false,
+          "_timeout": 40000
+        },
+        {
+          "uuid": "ef514d0f-b017-43d8-afc3-bb4cdc33676c",
+          "title": "ShoppingCart",
+          "fullFile": "/Users/gosouza/projeto/dappazon/test/ShoppingCart.js",
+          "file": "/test/ShoppingCart.js",
+          "beforeHooks": [
+            {
+              "title": "\"before each\" hook in \"ShoppingCart\"",
+              "fullTitle": "ShoppingCart \"before each\" hook in \"ShoppingCart\"",
+              "timedOut": false,
+              "duration": 23,
+              "state": null,
+              "speed": null,
+              "pass": false,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "[owner] = await ethers.getSigners();\nProduct = await ethers.getContractFactory(\"Product\");\nproduct = await Product.deploy();\nShoppingCart = await ethers.getContractFactory(\"ShoppingCart\");\nshoppingCart = await ShoppingCart.deploy(product.address);",
+              "err": {},
+              "uuid": "9085d662-24e8-4619-8a10-580a9b7a1d19",
+              "parentUUID": "ef514d0f-b017-43d8-afc3-bb4cdc33676c",
+              "isHook": true,
+              "skipped": false
+            }
+          ],
+          "afterHooks": [],
+          "tests": [],
+          "suites": [
+            {
+              "uuid": "44a244b3-f3eb-4120-8b73-dbf1db193cb3",
+              "title": "Deployment",
+              "fullFile": "/Users/gosouza/projeto/dappazon/test/ShoppingCart.js",
+              "file": "/test/ShoppingCart.js",
+              "beforeHooks": [],
+              "afterHooks": [],
+              "tests": [
+                {
+                  "title": "Should set the right owner",
+                  "fullTitle": "ShoppingCart Deployment Should set the right owner",
+                  "timedOut": false,
+                  "duration": 3,
+                  "state": "passed",
+                  "speed": "fast",
+                  "pass": true,
+                  "fail": false,
+                  "pending": false,
+                  "context": null,
+                  "code": "expect(await shoppingCart.owner()).to.equal(owner.address);",
+                  "err": {},
+                  "uuid": "40c46a0d-a31c-486e-9606-224dd6de789b",
+                  "parentUUID": "44a244b3-f3eb-4120-8b73-dbf1db193cb3",
+                  "isHook": false,
+                  "skipped": false
+                }
+              ],
+              "suites": [],
+              "passes": [
+                "40c46a0d-a31c-486e-9606-224dd6de789b"
+              ],
+              "failures": [],
+              "pending": [],
+              "skipped": [],
+              "duration": 3,
+              "root": false,
+              "rootEmpty": false,
+              "_timeout": 40000
+            },
+            {
+              "uuid": "8d065f28-5772-421e-b59c-0ab3f97f2d08",
+              "title": "ShoppingCart management",
+              "fullFile": "/Users/gosouza/projeto/dappazon/test/ShoppingCart.js",
+              "file": "/test/ShoppingCart.js",
+              "beforeHooks": [],
+              "afterHooks": [],
+              "tests": [
+                {
+                  "title": "Should create a shopping cart and emit event with correct data",
+                  "fullTitle": "ShoppingCart ShoppingCart management Should create a shopping cart and emit event with correct data",
+                  "timedOut": false,
+                  "duration": 7,
+                  "state": "failed",
+                  "speed": null,
+                  "pass": false,
+                  "fail": true,
+                  "pending": false,
+                  "context": null,
+                  "code": "// Create a new shopping cart\nconst shoppingCartData = { id: 1, total_cost: 0 };\nconst tx = await shoppingCart.create(shoppingCartData);\nconst receipt = await tx.wait();\n// Find the ShoppingCartCreated event in the transaction receipt\nconst ShoppingCartCreatedEvent = receipt.events.find(event => event.event === 'ShoppingCartCreated');\nexpect(ShoppingCartCreatedEvent.args.id).to.equal(1);\nexpect(ShoppingCartCreatedEvent.args.shoppingCartInfo.total_cost).to.equal(shoppingCartData.total_cost);\n// Ensure the shopping cart is stored with the correct info\nconst createdShoppingCart = await shoppingCart.read(1);\nexpect(createdShoppingCart.total_cost).to.equal(shoppingCartData.total_cost);",
+                  "err": {
+                    "message": "TypeError: Cannot read properties of undefined (reading 'args')",
+                    "estack": "TypeError: Cannot read properties of undefined (reading 'args')\n    at Context.<anonymous> (test/ShoppingCart.js:34:39)\n    at processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at runNextTicks (node:internal/process/task_queues:64:3)\n    at listOnTimeout (node:internal/timers:540:9)\n    at processTimers (node:internal/timers:514:7)",
+                    "diff": null
+                  },
+                  "uuid": "177fff52-cea7-4c16-9515-8c32985cc0ef",
+                  "parentUUID": "8d065f28-5772-421e-b59c-0ab3f97f2d08",
+                  "isHook": false,
+                  "skipped": false
+                },
+                {
+                  "title": "Should add a product to the shopping cart and emit event with correct data",
+                  "fullTitle": "ShoppingCart ShoppingCart management Should add a product to the shopping cart and emit event with correct data",
+                  "timedOut": false,
+                  "duration": 23,
+                  "state": "failed",
+                  "speed": null,
+                  "pass": false,
+                  "fail": true,
+                  "pending": false,
+                  "context": null,
+                  "code": "// Create a product before testing shopping cart functionality\nawait product.create({ cost: 100, rating: 5, stock: 10 });\nawait shoppingCart.create({ id: 1, total_cost: 0 });\n// Add product to the shopping cart\nconst tx = await shoppingCart.addProduct(1, 1, 1); // Shopping cart ID, product ID, quantity\nconst receipt = await tx.wait();\n// Find the ShoppingCartAddProduct event in the transaction receipt\nconst ShoppingCartAddProductEvent = receipt.events.find(event => event.event === 'ShoppingCartAddProduct');\nexpect(ShoppingCartAddProductEvent.args.id).to.equal(1);\nexpect(ShoppingCartAddProductEvent.args.shoppingCartInfo.total_cost).to.equal(100); // Assuming cost is cumulative\nconst itemsInfo = ShoppingCartAddProductEvent.args.itemsInfo;\nexpect(itemsInfo[0].productId).to.equal(1);\nexpect(itemsInfo[0].cost).to.equal(100);\nexpect(itemsInfo[0].rating).to.equal(5);\nexpect(itemsInfo[0].quantity).to.equal(1);\n// Ensure the shopping cart has the product with correct info\nconst shoppingCartItems = await shoppingCart.readProducts(1);\nexpect(shoppingCartItems[0].productId).to.equal(1);\nexpect(shoppingCartItems[0].cost).to.equal(100);\nexpect(shoppingCartItems[0].rating).to.equal(5);\nexpect(shoppingCartItems[0].quantity).to.equal(1);",
+                  "err": {
+                    "message": "AssertionError: expected 0 to equal 100. The numerical values of the given \"ethers.BigNumber\" and \"number\" inputs were compared, and they differed.",
+                    "estack": "AssertionError: expected 0 to equal 100. The numerical values of the given \"ethers.BigNumber\" and \"number\" inputs were compared, and they differed.\n    at Context.<anonymous> (test/ShoppingCart.js:55:79)\n    at processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at runNextTicks (node:internal/process/task_queues:64:3)\n    at listOnTimeout (node:internal/timers:540:9)\n    at processTimers (node:internal/timers:514:7)",
+                    "diff": "- 0\n+ 100\n"
+                  },
+                  "uuid": "540f5fe8-5888-4ed8-98cd-913243f22f91",
+                  "parentUUID": "8d065f28-5772-421e-b59c-0ab3f97f2d08",
+                  "isHook": false,
+                  "skipped": false
+                }
+              ],
+              "suites": [],
+              "passes": [],
+              "failures": [
+                "177fff52-cea7-4c16-9515-8c32985cc0ef",
+                "540f5fe8-5888-4ed8-98cd-913243f22f91"
+              ],
+              "pending": [],
+              "skipped": [],
+              "duration": 30,
+              "root": false,
+              "rootEmpty": false,
+              "_timeout": 40000
+            }
+          ],
+          "passes": [],
+          "failures": [],
+          "pending": [],
+          "skipped": [],
+          "duration": 0,
+          "root": false,
+          "rootEmpty": false,
+          "_timeout": 40000
+        }
+      ],
+      "passes": [],
+      "failures": [],
+      "pending": [],
+      "skipped": [],
+      "duration": 0,
+      "root": true,
+      "rootEmpty": true,
+      "_timeout": 40000
+    }
+  ],
+  "meta": {
+    "mocha": {
+      "version": "7.1.2"
+    },
+    "mochawesome": {
+      "options": {
+        "quiet": false,
+        "reportFilename": "mochawesome",
+        "saveHtml": true,
+        "saveJson": true,
+        "consoleReporter": "spec",
+        "useInlineDiffs": false,
+        "code": true
+      },
+      "version": "7.1.3"
+    },
+    "marge": {
+      "options": null,
+      "version": "6.2.0"
+    }
+  }
+}

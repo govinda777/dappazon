@@ -6,5 +6,8 @@ module.exports = {
     hardhat: {
       // configurações da rede local
     }
+  },
+  mocha: {
+    reporter: 'mochawesome'
   }
 };
