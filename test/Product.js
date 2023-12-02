@@ -92,11 +92,9 @@ describe("Product", function () {
         quantity: ethers.BigNumber.from(2) 
       }]
       
-      const tx = await product.updateStock(productDataUpdateStock);
-      const receipt = await tx.wait();
-
+      const receipt = await product.updateStock(productDataUpdateStock)
+      .then(tx => tx.wait());;
       
-
       // Procura pelo evento ProductCreated no recibo da transação
       const shoppingCartProducts = getEvents(receipt, 'ProductUpdateStock').args.shoppingCartProducts;
     
