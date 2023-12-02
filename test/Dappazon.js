@@ -1,5 +1,5 @@
-/* global ethers */
 
+const { ethers } = require("hardhat");
 const { expect } = require("chai")
 const util = require("./util")
 

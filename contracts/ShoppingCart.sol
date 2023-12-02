@@ -22,6 +22,7 @@ interface IShoppingCart {
     //Events
     event ShoppingCartCreated(uint256 id, IShoppingCart.model shoppingCartInfo);
     event ShoppingCartAddProduct(uint256 id, IShoppingCart.model shoppingCartInfo, IItem.model[] itemsInfo);
+    event ShoppingCartRemovedProduct(uint256 shoppingCartId, uint256 productId, uint256 quantity);
 
     //Functions
     function create(
@@ -83,8 +84,7 @@ contract ShoppingCart is IShoppingCart {
         uint256 _productId,
         uint256 _quantity
     ) public {
-        IProduct.model memory productInfo;
-        productInfo = product.read(_productId);
+        IProduct.model memory productInfo = product.read(_productId);
 
         require(productInfo.stock >= _quantity, "Not enough stock");
 
@@ -94,20 +94,58 @@ contract ShoppingCart is IShoppingCart {
         item.rating = productInfo.rating;
         item.quantity = _quantity;
 
+        _shoppingCarts[msg.sender][_shoppingCartsId].total_cost += item.cost * _quantity;
+
         _shoppingCartsProducts[msg.sender][_shoppingCartsId].push(item);
 
-        IItem.model[] storage productsInStorage = _shoppingCartsProducts[msg.sender][_shoppingCartsId];
-        IItem.model[] memory productsInMemory = new IItem.model[](productsInStorage.length);
-        for (uint256 i = 0; i < productsInStorage.length; i++) {
-            productsInMemory[i] = productsInStorage[i];
+        emit ShoppingCartAddProduct(
+            _shoppingCartsId,
+            _shoppingCarts[msg.sender][_shoppingCartsId],
+            _shoppingCartsProducts[msg.sender][_shoppingCartsId]
+        );
+    }
+
+    function removeProduct(uint256 _shoppingCartId, uint256 _productId, uint256 _quantity) public {
+        require(_quantity > 0, "Quantity must be greater than zero");
+        
+        IItem.model[] storage items = _shoppingCartsProducts[msg.sender][_shoppingCartId];
+        bool itemFound = false;
+        
+        for (uint256 i = 0; i < items.length; i++) {
+            if (items[i].productId == _productId) {
+                itemFound = true;
+                require(items[i].quantity >= _quantity, "Not enough item quantity");
+
+                // Atualiza o custo total do carrinho de compras
+                _shoppingCarts[msg.sender][_shoppingCartId].total_cost -= items[i].cost * _quantity;
+
+                if (items[i].quantity == _quantity) {
+                    // Se a quantidade a ser removida é igual à quantidade do item, remova o item do array
+                    removeItemAtIndex(items, i);
+                } else {
+                    // Caso contrário, apenas diminua a quantidade
+                    items[i].quantity -= _quantity;
+                }
+                break;
+            }
         }
 
-        emit ShoppingCartAddProduct(
-            _shoppingCartsId, 
-            _shoppingCarts[msg.sender][_shoppingCartsId], 
-            productsInMemory
-            );
+        require(itemFound, "Item not found in the shopping cart");
+
+        // Emitir evento de item removido (opcional)
+        emit ShoppingCartRemovedProduct(_shoppingCartId, _productId, _quantity);
     }
+
+function removeItemAtIndex(IItem.model[] storage items, uint256 index) internal {
+    require(index < items.length, "Index out of bounds");
+
+    // Move o último item para o local do item a ser removido
+    items[index] = items[items.length - 1];
+
+    // Remove o último item, agora duplicado
+    items.pop();
+}
+
 
     function read(
         uint256 _id
