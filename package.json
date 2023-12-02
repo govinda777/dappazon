@@ -23,6 +23,7 @@
     "node": "npx hardhat node  --config hardhat.local.config.js",
     "deploy-local": "npx hardhat run ./scripts/deploy.js --network localhost  --config hardhat.local.config.js",
     "test": "npx hardhat test --network hardhat --config hardhat.local.config.js",
+    "test:file": "npx hardhat test --network hardhat --config hardhat.local.config.js",
     "eject": "react-scripts eject",
     "deploy": "npx hardhat run ./scripts/deploy.js --network goerli"
   },
@@ -55,6 +56,7 @@
     "@types/chai": "^4.2.0",
     "@types/mocha": "^9.1.0",
     "chai": "^4.2.0",
+    "chai-bignumber": "^3.1.0",
     "hardhat": "^2.17.2",
     "hardhat-gas-reporter": "^1.0.8",
     "husky": "^8.0.3",

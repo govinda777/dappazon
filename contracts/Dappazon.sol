@@ -41,7 +41,7 @@ contract Dappazon {
         //Check if products are in stock
         for (uint256 i = 0; i < _shoppingCartProducts.length; i++) {
             
-            _produtcsId[i] = _shoppingCartProducts[i].produtcId;
+            _produtcsId[i] = _shoppingCartProducts[i].productId;
             
             require(product.read(_produtcsId[i]).stock >= _shoppingCartProducts[i].quantity, "Insufficient stock");
         }

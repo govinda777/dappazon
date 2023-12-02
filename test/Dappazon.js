@@ -4,51 +4,57 @@ const tokens = (n) => {
   return ethers.utils.parseUnits(n.toString(), 'ether')
 }
 
-// Global constants for listing an item...
-const ID = 1
-const NAME = "Shoes"
-const CATEGORY = "Clothing"
-const IMAGE = "https://ipfs.io/ipfs/QmTYEboq8raiBs7GTUg2yLXB3PMz6HuBNgNfSZBx5Msztg/shoes.jpg"
-const COST = tokens(1)
-const RATING = 4
-const STOCK = 5
-
-const logContractInfos = (contract) => {
-  console.log(contract.address)
-}
-
 describe("Dappazon", () => {
   let dappazon, product, order, shoppingCart
   let deployer, buyer
+  let productInfo, shoppingCartInfo
 
   beforeEach(async () => {
     // Setup accounts
     [deployer, buyer] = await ethers.getSigners()
 
-    // Deploy Product contract
     const Product = await ethers.getContractFactory("Product")
     product = await Product.deploy()
     
-    logContractInfos(product)
+    console.log(`Product: ${product.address}`)
     
-    // Deploy Order contract
     const Order = await ethers.getContractFactory("Order")
     order = await Order.deploy()
 
-    logContractInfos(order)
+    console.log(`Order: ${order.address}`)
 
-    // Deploy ShoppingCart contract
     const ShoppingCart = await ethers.getContractFactory("ShoppingCart")
     shoppingCart = await ShoppingCart.deploy(product.address)
 
-    logContractInfos(shoppingCart)
+    console.log(`ShoppingCart: ${shoppingCart.address}`)
 
-    // Deploy Dappazon contract
     const Dappazon = await ethers.getContractFactory("Dappazon")
     dappazon = await Dappazon.deploy(product.address, order.address, shoppingCart.address)
 
-    logContractInfos(dappazon)
+    console.log(`Dappazon: ${dappazon.address}`)
   })
+
+  const createNewProduct = async () => {
+    const productData = { cost: 100, rating: 5, stock: 10 };
+    
+    // Envia a transação e espera pela confirmação
+    const tx = await product.create(productData);
+    const receipt = await tx.wait();
+  
+    // Procura pelo evento ProductCreated no recibo da transação
+    return receipt.events.find(event => event.event === 'ProductCreated');
+  }
+
+  const createNewShoppingCart = async (productData) => {
+    
+    // Envia a transação e espera pela confirmação
+    const tx = await shoppingCart.create(productData);
+    const receipt = await tx.wait();
+  
+    // Procura pelo evento ProductCreated no recibo da transação
+    return receipt.events.find(event => event.event === 'ProductCreated');
+  }
+  
 
   describe("Deployment", () => {
     it("Sets the owner", async () => {
@@ -60,17 +66,9 @@ describe("Dappazon", () => {
     let transaction
 
     beforeEach(async () => {
-      // List a item
-      await product.connect(deployer).create()
-
-      transaction = await dappazon.connect(deployer).list(ID, NAME, CATEGORY, IMAGE, COST, RATING, STOCK)
-      await transaction.wait()
-
-      // Buy a item
-      transaction = await dappazon.connect(buyer).buy(ID, { value: COST })
-      await transaction.wait()
+      productInfo = createNewProduct()
+      shoppingCartInfo = createNewShoppingCart(productInfo)
     })
-
 
     it("Updates buyer's order count", async () => {
       const result = await dappazon.orderCount(buyer.address)

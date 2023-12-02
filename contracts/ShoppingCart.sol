@@ -6,7 +6,7 @@ import "./Product.sol";
 interface IItem {
     
     struct model {
-        uint256 produtcId;
+        uint256 productId;
         uint256 cost;
         uint256 rating;
         uint256 quantity;
@@ -19,6 +19,11 @@ interface IShoppingCart {
         uint256 total_cost;
     }
 
+    //Events
+    event ShoppingCartCreated(uint256 id, IShoppingCart.model shoppingCartInfo);
+    event ShoppingCartAddProduct(uint256 id, IShoppingCart.model shoppingCartInfo, IItem.model[] itemsInfo);
+
+    //Functions
     function create(
         IShoppingCart.model memory _shoppingCart
     ) external returns (uint256);
@@ -84,12 +89,24 @@ contract ShoppingCart is IShoppingCart {
         require(productInfo.stock >= _quantity, "Not enough stock");
 
         IItem.model memory item;
-        item.produtcId = _productId;
+        item.productId = _productId;
         item.cost = productInfo.cost;
         item.rating = productInfo.rating;
         item.quantity = _quantity;
 
         _shoppingCartsProducts[msg.sender][_shoppingCartsId].push(item);
+
+        IItem.model[] storage productsInStorage = _shoppingCartsProducts[msg.sender][_shoppingCartsId];
+        IItem.model[] memory productsInMemory = new IItem.model[](productsInStorage.length);
+        for (uint256 i = 0; i < productsInStorage.length; i++) {
+            productsInMemory[i] = productsInStorage[i];
+        }
+
+        emit ShoppingCartAddProduct(
+            _shoppingCartsId, 
+            _shoppingCarts[msg.sender][_shoppingCartsId], 
+            productsInMemory
+            );
     }
 
     function read(
@@ -109,7 +126,7 @@ contract ShoppingCart is IShoppingCart {
 
             IItem.model memory element = IItem.model({
 
-                produtcId: products[i].produtcId,
+                productId: products[i].productId,
                 cost: products[i].cost,
                 rating: products[i].rating,
                 quantity: products[i].quantity

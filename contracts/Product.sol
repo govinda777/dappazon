@@ -72,14 +72,14 @@ contract Product is IProduct {
         IItem.model[] memory _shoppingCartProducts
     ) external onlyOwner {
         for (uint256 i = 0; i < _shoppingCartProducts.length; i++) {
-            uint256 produtcId = _shoppingCartProducts[i].produtcId;
-            IProduct.model memory productInfo = read(produtcId);
+            uint256 productId = _shoppingCartProducts[i].productId;
+            IProduct.model memory productInfo = read(productId);
 
             productInfo.stock =
                 productInfo.stock -
                 _shoppingCartProducts[i].quantity;
 
-            update(produtcId, productInfo);
+            update(productId, productInfo);
         }
 
         emit ProductUpdateStock(_shoppingCartProducts);

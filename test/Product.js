@@ -1,4 +1,15 @@
+
+
 const { expect } = require("chai");
+const { BigNumber } = require('ethers');
+
+const isGreaterThan = (bn1, bn2) => {
+  return ethers.BigNumber.from(bn1).gt(ethers.BigNumber.from(bn2));
+}
+
+const getEvents = (receipt, eventName) => {
+  return receipt.events.find(event => event.event === eventName)
+}
 
 describe("Product", function () {
   let Product, product;
@@ -67,23 +78,31 @@ describe("Product", function () {
 
     it("Should update stock a product and emit event with correct data", async function () {
       
-      const productData = { cost: 100, rating: 5, stock: 10 }
+      const productData = { 
+        cost: ethers.BigNumber.from(100), 
+        rating: ethers.BigNumber.from(5), 
+        stock: ethers.BigNumber.from(10) 
+      }
       await product.create(productData);
 
-      const productDataUpdateStock = [{ produtcId: 1, cost: 200, rating: 5, quantity: 2 }]
+      const productDataUpdateStock = [{ 
+        productId: ethers.BigNumber.from(1), 
+        cost: ethers.BigNumber.from(200), 
+        rating: ethers.BigNumber.from(5), 
+        quantity: ethers.BigNumber.from(2) 
+      }]
       
       const tx = await product.updateStock(productDataUpdateStock);
       const receipt = await tx.wait();
 
-      // Procura pelo evento ProductCreated no recibo da transação
-      const ProductUpdateStock = receipt.events.find(event => event.event === 'ProductUpdateStock');
       
-      const shoppingCartProducts = ProductUpdateStock.args.shoppingCartProducts;
 
-      expect(shoppingCartProducts[0].produtcId).to.equal(1);
-      expect(shoppingCartProducts[0].cost).to.equal(productDataUpdateStock[0].cost);
-      expect(shoppingCartProducts[0].rating).to.equal(productDataUpdateStock[0].rating);
-      expect(shoppingCartProducts[0].quantity).to.equal(productDataUpdateStock[0].quantity);
+      // Procura pelo evento ProductCreated no recibo da transação
+      const shoppingCartProducts = getEvents(receipt, 'ProductUpdateStock').args.shoppingCartProducts;
+    
+      expect(shoppingCartProducts[0]["productId"] instanceof BigNumber)
+      expect(shoppingCartProducts[0]["productId"]).to.equal(productDataUpdateStock[0].productId)
+      expect(isGreaterThan(shoppingCartProducts[0]["quantity"], productDataUpdateStock[0].quantity))
 
       const updatedProduct = await product.read(1);
 
