@@ -1,3 +1,5 @@
+/* global ethers */
+
 const { expect } = require("chai");
 
 describe("ShoppingCart", function () {

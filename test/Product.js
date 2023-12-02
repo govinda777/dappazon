@@ -1,20 +1,13 @@
-
+/* global ethers */
 
 const { expect } = require("chai");
+const util = require("./util");
 const { BigNumber } = require('ethers');
-
-const isGreaterThan = (bn1, bn2) => {
-  return ethers.BigNumber.from(bn1).gt(ethers.BigNumber.from(bn2));
-}
-
-const getEvents = (receipt, eventName) => {
-  return receipt.events.find(event => event.event === eventName)
-}
 
 describe("Product", function () {
   let Product, product;
   let owner;
-
+  
   beforeEach(async function () {
     [owner] = await ethers.getSigners();
     Product = await ethers.getContractFactory("Product");
@@ -96,11 +89,11 @@ describe("Product", function () {
       .then(tx => tx.wait());;
       
       // Procura pelo evento ProductCreated no recibo da transação
-      const shoppingCartProducts = getEvents(receipt, 'ProductUpdateStock').args.shoppingCartProducts;
+      const shoppingCartProducts = util.getEvents(receipt, 'ProductUpdateStock').args.shoppingCartProducts;
     
       expect(shoppingCartProducts[0]["productId"] instanceof BigNumber)
       expect(shoppingCartProducts[0]["productId"]).to.equal(productDataUpdateStock[0].productId)
-      expect(isGreaterThan(shoppingCartProducts[0]["quantity"], productDataUpdateStock[0].quantity))
+      expect(util.isGreaterThan(shoppingCartProducts[0]["quantity"], productDataUpdateStock[0].quantity))
 
       const updatedProduct = await product.read(1);
 

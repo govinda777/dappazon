@@ -1,8 +1,7 @@
-const { expect } = require("chai")
+/* global ethers */
 
-const tokens = (n) => {
-  return ethers.utils.parseUnits(n.toString(), 'ether')
-}
+const { expect } = require("chai")
+const util = require("./util")
 
 describe("Dappazon", () => {
   let dappazon, product, order, shoppingCart
