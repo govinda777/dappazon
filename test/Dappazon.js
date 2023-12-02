@@ -46,11 +46,9 @@ describe("Dappazon", () => {
 
   const createNewShoppingCart = async (productData) => {
     
-    // Envia a transação e espera pela confirmação
     const tx = await shoppingCart.create(productData);
     const receipt = await tx.wait();
   
-    // Procura pelo evento ProductCreated no recibo da transação
     return receipt.events.find(event => event.event === 'ProductCreated');
   }
   

@@ -51,11 +51,7 @@ describe("Product", function () {
       
       const productDataUpdate = { cost: 200, rating: 4, stock: 5 }
       
-      const tx = await product.update(1, productDataUpdate);
-      const receipt = await tx.wait();
-
-      // Procura pelo evento ProductCreated no recibo da transação
-      const ProductUpdated = receipt.events.find(event => event.event === 'ProductUpdated');
+      const ProductUpdated = await util.safExecution(() => product.update(1, productDataUpdate), 'ProductUpdated')
       
       expect(ProductUpdated.args.id).to.equal(1);
       expect(ProductUpdated.args.product.cost).to.equal(productDataUpdate.cost);
