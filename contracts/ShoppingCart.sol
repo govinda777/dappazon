@@ -16,18 +16,16 @@ interface IItem {
 interface IShoppingCart {
     struct model {
         uint256 id;
-        uint256 total_cost;
+        uint256 totalCost;
     }
 
     //Events
-    event ShoppingCartCreated(uint256 id, IShoppingCart.model shoppingCartInfo);
+    event ShoppingCartCreated(uint256 id);
     event ShoppingCartAddProduct(uint256 id, IShoppingCart.model shoppingCartInfo, IItem.model[] itemsInfo);
     event ShoppingCartRemovedProduct(uint256 shoppingCartId, uint256 productId, uint256 quantity);
 
     //Functions
-    function create(
-        IShoppingCart.model memory _shoppingCart
-    ) external returns (uint256);
+    function create() external returns (uint256);
 
     function addProduct(
         uint256 _shoppingCartsId,
@@ -65,18 +63,18 @@ contract ShoppingCart is IShoppingCart {
     }
 
     //Create a new shopping cart and return shopping_cart_id
-    function create(
-        IShoppingCart.model memory _shoppingCart
-    ) public returns (uint256) {
-        //new shopping cart
+    function create() public returns (uint256) {
+        
+        IShoppingCart.model memory _shoppingCart;
+
         shoppingCartsCount[msg.sender]++;
-        _shoppingCarts[msg.sender][
-            shoppingCartsCount[msg.sender]
-        ] = _shoppingCart;
+        _shoppingCart.id = shoppingCartsCount[msg.sender];
 
-        uint256 shoppingCartId = shoppingCartsCount[msg.sender];
+        _shoppingCarts[msg.sender][_shoppingCart.id] = _shoppingCart;
 
-        return shoppingCartId;
+        emit ShoppingCartCreated(_shoppingCart.id);
+
+        return _shoppingCart.id;
     }
 
     function addProduct(
@@ -94,7 +92,7 @@ contract ShoppingCart is IShoppingCart {
         item.rating = productInfo.rating;
         item.quantity = _quantity;
 
-        _shoppingCarts[msg.sender][_shoppingCartsId].total_cost += item.cost * _quantity;
+        _shoppingCarts[msg.sender][_shoppingCartsId].totalCost += item.cost * _quantity;
 
         _shoppingCartsProducts[msg.sender][_shoppingCartsId].push(item);
 
@@ -117,7 +115,7 @@ contract ShoppingCart is IShoppingCart {
                 require(items[i].quantity >= _quantity, "Not enough item quantity");
 
                 // Atualiza o custo total do carrinho de compras
-                _shoppingCarts[msg.sender][_shoppingCartId].total_cost -= items[i].cost * _quantity;
+                _shoppingCarts[msg.sender][_shoppingCartId].totalCost -= items[i].cost * _quantity;
 
                 if (items[i].quantity == _quantity) {
                     // Se a quantidade a ser removida é igual à quantidade do item, remova o item do array
@@ -136,16 +134,15 @@ contract ShoppingCart is IShoppingCart {
         emit ShoppingCartRemovedProduct(_shoppingCartId, _productId, _quantity);
     }
 
-function removeItemAtIndex(IItem.model[] storage items, uint256 index) internal {
-    require(index < items.length, "Index out of bounds");
+    function removeItemAtIndex(IItem.model[] storage items, uint256 index) internal {
+        require(index < items.length, "Index out of bounds");
 
-    // Move o último item para o local do item a ser removido
-    items[index] = items[items.length - 1];
+        // Move o último item para o local do item a ser removido
+        items[index] = items[items.length - 1];
 
-    // Remove o último item, agora duplicado
-    items.pop();
-}
-
+        // Remove o último item, agora duplicado
+        items.pop();
+    }
 
     function read(
         uint256 _id
@@ -153,9 +150,8 @@ function removeItemAtIndex(IItem.model[] storage items, uint256 index) internal 
         return _shoppingCarts[msg.sender][_id];
     }
 
-    
     function readProducts(uint256 _shoppingCartsId) public view returns (IItem.model[] memory) {
-        
+    
         IItem.model[] memory products = _shoppingCartsProducts[msg.sender][_shoppingCartsId];
         
         IItem.model[] memory convertedProducts = new IItem.model[](products.length);

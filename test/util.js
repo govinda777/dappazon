@@ -6,8 +6,18 @@ class util {
         return ethers.BigNumber.from(bn1).gt(ethers.BigNumber.from(bn2));
     }
 
+    static isEqual(bn1, bn2) {
+
+        let bn1Conv = ethers.BigNumber.from(bn1);
+        let bn2Conv = ethers.BigNumber.from(bn2);
+
+        let response = bn1Conv.eq(bn2Conv);
+
+        return response
+    }
+
     static getEvents(receipt, eventName) {
-        return receipt.events.find(event => event.event === eventName);
+        return receipt.events.find(event => event.event === eventName).args;
     }
 
     static tokens(n) {

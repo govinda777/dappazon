@@ -31,12 +31,13 @@ contract Dappazon {
     }
 
     function buy(uint256 shoppingCartId) public payable returns (uint256) {
+        /*
         //Get shopping cart
         IShoppingCart.model memory _shoppingCartInfo = shoppingCart.read(shoppingCartId);
         IItem.model[] memory _shoppingCartProducts = shoppingCart.readProducts(shoppingCartId);
         uint256[] memory _produtcsId;
 
-        require(_shoppingCartInfo.total_cost <= msg.value, "Insufficient funds");
+        require(_shoppingCartInfo.totalCost <= msg.value, "Insufficient funds");
 
         //Check if products are in stock
         for (uint256 i = 0; i < _shoppingCartProducts.length; i++) {
@@ -52,6 +53,7 @@ contract Dappazon {
         product.updateStock(_shoppingCartProducts);
 
         return orderId;
+        */
     }
 
     function withdraw() public onlyOwner {

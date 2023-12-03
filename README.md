@@ -1,4 +1,3 @@
-Here's the translated README:
 
 # Dappazon
 
@@ -110,6 +109,7 @@ Junte-se à revolução do e-commerce. Descubra o Dappazon e crie a loja online 
 
 ### 3. Run tests
 `$ yarn test`
+
 
 ### 4. Start Hardhat node
 `$ yarn run node`

@@ -22,13 +22,12 @@ describe("Product", function () {
   describe("Product management", function () {
 
     it("Should create a product and emit event with correct data", async function () {
-      const productData = { cost: 100, rating: 5, stock: 10 };
+      const productData = { cost: 100, rating: 5, stock: 10 }
   
       // Envia a transação e espera pela confirmação
       const tx = await product.create(productData);
       const receipt = await tx.wait();
   
-      // Procura pelo evento ProductCreated no recibo da transação
       const ProductCreatedEvent = receipt.events.find(event => event.event === 'ProductCreated');
   
       const createdProduct = await product.read(ProductCreatedEvent.args.id);
@@ -52,10 +51,10 @@ describe("Product", function () {
       
       const ProductUpdated = await util.safExecution(() => product.update(1, productDataUpdate), 'ProductUpdated')
       
-      expect(ProductUpdated.args.id).to.equal(1);
-      expect(ProductUpdated.args.product.cost).to.equal(productDataUpdate.cost);
-      expect(ProductUpdated.args.product.rating).to.equal(productDataUpdate.rating);
-      expect(ProductUpdated.args.product.stock).to.equal(productDataUpdate.stock);
+      expect(ProductUpdated.id).to.equal(1);
+      expect(ProductUpdated.product.cost).to.equal(productDataUpdate.cost);
+      expect(ProductUpdated.product.rating).to.equal(productDataUpdate.rating);
+      expect(ProductUpdated.product.stock).to.equal(productDataUpdate.stock);
 
       const updatedProduct = await product.read(1);
 
@@ -84,7 +83,7 @@ describe("Product", function () {
       .then(tx => tx.wait());;
       
       // Procura pelo evento ProductCreated no recibo da transação
-      const shoppingCartProducts = util.getEvents(receipt, 'ProductUpdateStock').args.shoppingCartProducts;
+      const shoppingCartProducts = util.getEvents(receipt, 'ProductUpdateStock').shoppingCartProducts;
     
       expect(shoppingCartProducts[0]["productId"] instanceof BigNumber)
       expect(shoppingCartProducts[0]["productId"]).to.equal(productDataUpdateStock[0].productId)
