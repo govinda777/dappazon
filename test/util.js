@@ -17,7 +17,10 @@ class util {
     }
 
     static getEvents(receipt, eventName) {
-        return receipt.events.find(event => event.event === eventName).args;
+
+        const event = receipt.events.find(event => event.event === eventName);
+
+        return event ? event.args : null;
     }
 
     static tokens(n) {

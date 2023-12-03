@@ -70,14 +70,15 @@ describe("Product", function () {
         rating: ethers.BigNumber.from(5), 
         stock: ethers.BigNumber.from(10) 
       }
+
       await product.create(productData);
 
-      const productDataUpdateStock = [{ 
+      const productDataUpdateStock = { 
         productId: ethers.BigNumber.from(1), 
         cost: ethers.BigNumber.from(200), 
         rating: ethers.BigNumber.from(5), 
         quantity: ethers.BigNumber.from(2) 
-      }]
+      }
       
       const receipt = await product.updateStock(productDataUpdateStock)
       .then(tx => tx.wait());;
@@ -85,15 +86,18 @@ describe("Product", function () {
       // Procura pelo evento ProductCreated no recibo da transação
       const shoppingCartProducts = util.getEvents(receipt, 'ProductUpdateStock').shoppingCartProducts;
     
-      expect(shoppingCartProducts[0]["productId"] instanceof BigNumber)
-      expect(shoppingCartProducts[0]["productId"]).to.equal(productDataUpdateStock[0].productId)
-      expect(util.isGreaterThan(shoppingCartProducts[0]["quantity"], productDataUpdateStock[0].quantity))
+      console.log('shoppingCartProducts:', shoppingCartProducts);
+      console.log('productDataUpdateStock:', productDataUpdateStock);
+
+      expect(shoppingCartProducts["productId"] instanceof BigNumber)
+      expect(shoppingCartProducts["productId"]).to.equal(productDataUpdateStock.productId)
+      expect(util.isGreaterThan(shoppingCartProducts["quantity"], productDataUpdateStock.quantity))
 
       const updatedProduct = await product.read(1);
 
       expect(updatedProduct.cost).to.equal(productData.cost);
       expect(updatedProduct.rating).to.equal(productData.rating);
-      expect(updatedProduct.stock).to.equal(productData.stock - productDataUpdateStock[0].quantity);
+      expect(updatedProduct.stock).to.equal(productData.stock - productDataUpdateStock.quantity);
     });
 
     it("Should delete a product and emit event with correct data", async function () {

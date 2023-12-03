@@ -13,47 +13,47 @@ contract Dappazon {
     IShoppingCart public shoppingCart;
 
     event Buy(address buyer, uint256 orderId, uint256[] productIds);
-    event List(string name, uint256 cost, uint256 quantity);
-
+    
     modifier onlyOwner() {
         require(msg.sender == owner);
         _;
     }
 
-    constructor(address _productAddress, 
+    constructor(
                 address _orderAddress,
                 address _shoppingCartAddress) {
 
         owner = msg.sender;
-        product = Product(_productAddress);
+        product = new Product();
         order = Order(_orderAddress);
         shoppingCart = ShoppingCart(_shoppingCartAddress);
     }
 
     function buy(uint256 shoppingCartId) public payable returns (uint256) {
-        /*
-        //Get shopping cart
+
         IShoppingCart.model memory _shoppingCartInfo = shoppingCart.read(shoppingCartId);
         IItem.model[] memory _shoppingCartProducts = shoppingCart.readProducts(shoppingCartId);
-        uint256[] memory _produtcsId;
-
+        uint256[] memory _productIds = new uint256[](_shoppingCartProducts.length);
+        
         require(_shoppingCartInfo.totalCost <= msg.value, "Insufficient funds");
 
-        //Check if products are in stock
         for (uint256 i = 0; i < _shoppingCartProducts.length; i++) {
             
-            _produtcsId[i] = _shoppingCartProducts[i].productId;
+            IItem.model memory item = _shoppingCartProducts[i];
             
-            require(product.read(_produtcsId[i]).stock >= _shoppingCartProducts[i].quantity, "Insufficient stock");
+            _productIds[i] = item.productId;
+            
+            require(product.read(item.productId).stock >= item.quantity, "Insufficient stock");
+            
+            require(product.updateStock(item), "Update stock failed");
         }
         
-        uint256 orderId = order.create(shoppingCartId, _produtcsId);
+        uint256 orderId = order.create(shoppingCartId, _productIds);
 
-        // Add order for user
-        product.updateStock(_shoppingCartProducts);
+        emit Buy(msg.sender, orderId, _productIds);
 
         return orderId;
-        */
+        
     }
 
     function withdraw() public onlyOwner {
@@ -61,3 +61,4 @@ contract Dappazon {
         require(success);
     }
 }
+

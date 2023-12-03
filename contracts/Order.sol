@@ -16,7 +16,6 @@ interface IOrder {
     function create(uint256 _shoppingCartId, uint256[] memory _products) external returns (uint256);
     function read(uint256 _id) external view returns (IOrder.model memory);
     function readProducts(uint256 _orderId) external view returns (uint256[] memory);
-    function update(uint256 _id, IOrder.model memory _order) external;
 }
 
 contract Order is IOrder {
@@ -36,15 +35,18 @@ contract Order is IOrder {
     }
 
     function create(uint256 _shoppingCartId, uint256[] memory _productsIds) public returns (uint256) {
+        
         orderCount[msg.sender]++;
 
-        _orders[msg.sender][orderCount[msg.sender]] = IOrder.model(_shoppingCartId);
+        uint256 orderId = orderCount[msg.sender];
+
+        _orders[msg.sender][orderId] = IOrder.model(_shoppingCartId);
         
-        _ordersProducts[msg.sender][orderCount[msg.sender]] = _productsIds;
+        _ordersProducts[msg.sender][orderId] = _productsIds;
 
-        emit OrderCreated(msg.sender, orderCount[msg.sender], _productsIds);
+        emit OrderCreated(msg.sender, orderId, _productsIds);
 
-        return orderCount[msg.sender];
+        return orderId;
     }
 
     function read(uint256 _id) public view returns (IOrder.model memory) {
@@ -53,9 +55,5 @@ contract Order is IOrder {
 
     function readProducts(uint256 _orderId) public view returns (uint256[] memory) {
         return _ordersProducts[msg.sender][_orderId];
-    }
-
-    function update(uint256 _id, IOrder.model memory _order) public {
-        _orders[msg.sender][_id] = _order;
     }
 }

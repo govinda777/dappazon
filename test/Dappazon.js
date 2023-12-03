@@ -1,122 +1,96 @@
-
 const { ethers } = require("hardhat");
-const { expect } = require("chai")
-const util = require("./util")
+const { expect } = require("chai");
+const util = require("./util");
 
-describe("Dappazon", () => {
-  let dappazon, product, order, shoppingCart
-  let deployer, buyer
-  let productInfo, shoppingCartInfo
-
-  beforeEach(async () => {
-    // Setup accounts
-    [deployer, buyer] = await ethers.getSigners()
-
-    const Product = await ethers.getContractFactory("Product")
-    product = await Product.deploy()
-    
-    console.log(`Product: ${product.address}`)
-    
-    const Order = await ethers.getContractFactory("Order")
-    order = await Order.deploy()
-
-    console.log(`Order: ${order.address}`)
-
-    const ShoppingCart = await ethers.getContractFactory("ShoppingCart")
-    shoppingCart = await ShoppingCart.deploy(product.address)
-
-    console.log(`ShoppingCart: ${shoppingCart.address}`)
-
-    const Dappazon = await ethers.getContractFactory("Dappazon")
-    dappazon = await Dappazon.deploy(product.address, order.address, shoppingCart.address)
-
-    console.log(`Dappazon: ${dappazon.address}`)
-  })
-
-  const createNewProduct = async () => {
-    const productData = { cost: 100, rating: 5, stock: 10 };
-    
-    // Envia a transação e espera pela confirmação
-    const tx = await product.create(productData);
-    const receipt = await tx.wait();
+describe("Dappazon Contract", function () {
+  let dappazon, product, order, shoppingCart;
+  let owner;
+  let productInfo1, productInfo2, shoppingCartId;
   
-    // Procura pelo evento ProductCreated no recibo da transação
-    return receipt.events.find(event => event.event === 'ProductCreated');
+  const createData = async () => {
+    const productData = { cost: 100, rating: 5, stock: 10 }
+
+    shoppingCartId = await util.safExecution(
+      () => shoppingCart.create(), 'ShoppingCartCreated').then(
+        result => result.id);
+
+    productInfo1 = await util.safExecution(
+      () => product.create(productData), 'ProductCreated')
+
+    productInfo2 = await util.safExecution(
+      () => product.create(productData), 'ProductCreated')
+
+    await shoppingCart.addProduct(shoppingCartId, productInfo1.id, 2);
+    await shoppingCart.addProduct(shoppingCartId, productInfo2.id, 3);
   }
 
-  const createNewShoppingCart = async (productData) => {
+  beforeEach(async function () {
+    [owner] = await ethers.getSigners();
+
+    // Deploy the Product, Order, and ShoppingCart contracts
+    const Product = await ethers.getContractFactory("Product", owner);
+    const Order = await ethers.getContractFactory("Order", owner);
+    const ShoppingCart = await ethers.getContractFactory("ShoppingCart", owner);
+    const Dappazon = await ethers.getContractFactory("Dappazon", owner);
+
+    product = await Product.deploy();
+    order = await Order.deploy();
+    shoppingCart = await ShoppingCart.deploy(product.address);
+    dappazon = await Dappazon.deploy(order.address, shoppingCart.address);
     
-    const tx = await shoppingCart.create(productData);
-    const receipt = await tx.wait();
-  
-    return receipt.events.find(event => event.event === 'ProductCreated');
-  }
-  
+    createData();
+  });
 
-  describe("Deployment", () => {
-    it("Sets the owner", async () => {
-      expect(await dappazon.owner()).to.equal(deployer.address)
-    })
-  })
+  describe("Deployment", function () {
+    it("Should set the right owner", async function () {
+      expect(await order.owner()).to.equal(owner.address);
+      expect(await product.owner()).to.equal(owner.address);
+      expect(await shoppingCart.owner()).to.equal(owner.address);
+      expect(await dappazon.owner()).to.equal(owner.address);
+    });
+  });
 
-  describe("Buying", () => {
-    let transaction
+  describe("Dappazon management", function () {
+    
+    it("Should buy a products and emit event with correct data", async function () {
+      // Arrange
+      console.log('shoppingCartId', shoppingCartId);
 
-    beforeEach(async () => {
-      productInfo = createNewProduct()
-      shoppingCartInfo = createNewShoppingCart(productInfo)
-    })
+      /*
+        uint256 productId;
+        uint256 cost;
+        uint256 rating;
+        uint256 quantity;
+      */
 
-    it("Updates buyer's order count", async () => {
-      const result = await dappazon.orderCount(buyer.address)
-      expect(result).to.equal(1)
-    })
+      const shoppingCartData = await shoppingCart.read(shoppingCartId)
+      const cartProductData = await shoppingCart.readProducts(shoppingCartId)
+      const totalCart = cartProductData.reduce((acc, cur) => acc + cur.cost * cur.quantity, 0)
+      console.log('shoppingCartData', shoppingCartData)
+      console.log('cartProductData', cartProductData)
+      console.log('totalCart', totalCart)
 
-    it("Adds the order", async () => {
-      const order = await dappazon.orders(buyer.address, 1)
+      const product1DataCheck0 = await product.read(productInfo1.id)
 
-      expect(order.time).to.be.greaterThan(0)
-      expect(order.item.name).to.equal(NAME)
-    })
+      console.log('product1DataCheck', product1DataCheck0)
 
-    it("Updates the contract balance", async () => {
-      const result = await ethers.provider.getBalance(dappazon.address)
-      expect(result).to.equal(COST)
-    })
+      // Act
+      const result = await util.safExecution(
+        () => dappazon.buy(shoppingCartId, {value: totalCart}), 'Buy');
+      
+      console.log('Buy Event', result);
 
-    it("Emits Buy event", () => {
-      expect(transaction).to.emit(dappazon, "Buy")
-    })
-  })
 
-  describe("Withdrawing", () => {
-    let balanceBefore
+      const product1DataCheck = await product.read(productInfo1.id)
 
-    beforeEach(async () => {
-      // List a item
-      let transaction = await dappazon.connect(deployer).list(ID, NAME, CATEGORY, IMAGE, COST, RATING, STOCK)
-      await transaction.wait()
+      console.log('product1DataCheck', product1DataCheck)
+      
+      // Assert
+      expect(result).to.equal(1);
+    });
 
-      // Buy a item
-      transaction = await dappazon.connect(buyer).buy(ID, { value: COST })
-      await transaction.wait()
 
-      // Get Deployer balance before
-      balanceBefore = await ethers.provider.getBalance(deployer.address)
 
-      // Withdraw
-      transaction = await dappazon.connect(deployer).withdraw()
-      await transaction.wait()
-    })
+  });
 
-    it('Updates the owner balance', async () => {
-      const balanceAfter = await ethers.provider.getBalance(deployer.address)
-      expect(balanceAfter).to.be.greaterThan(balanceBefore)
-    })
-
-    it('Updates the contract balance', async () => {
-      const result = await ethers.provider.getBalance(dappazon.address)
-      expect(result).to.equal(0)
-    })
-  })
-})
+});
