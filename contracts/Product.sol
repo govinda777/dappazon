@@ -81,6 +81,8 @@ contract Product is IProduct {
 
         update(productId, productInfo);
 
+        productInfo = read(productId);
+
         emit ProductUpdateStock(productInfo.stock, _shoppingCartProduct);
 
         return true;

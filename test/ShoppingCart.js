@@ -57,11 +57,11 @@ describe("ShoppingCart Contract", function () {
         () => shoppingCart.create(), 'ShoppingCartCreated')
 
       //Act
-
       const items = await shoppingCart.readProducts(shoppingCartCreated.id)
-
-      //Assert
+      console.log("items", items)
       
+      //Assert
+      expect(items).to.equal([]);
     });
 
     // Test cases

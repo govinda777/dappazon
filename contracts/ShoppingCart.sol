@@ -62,7 +62,6 @@ contract ShoppingCart is IShoppingCart {
         product = Product(_productAddress);
     }
 
-    //Create a new shopping cart and return shopping_cart_id
     function create() public returns (uint256) {
         
         IShoppingCart.model memory _shoppingCart;
@@ -151,25 +150,8 @@ contract ShoppingCart is IShoppingCart {
     }
 
     function readProducts(uint256 _shoppingCartsId) public view returns (IItem.model[] memory) {
-    
-        IItem.model[] memory products = _shoppingCartsProducts[msg.sender][_shoppingCartsId];
-        
-        IItem.model[] memory convertedProducts = new IItem.model[](products.length);
-        
-        for (uint256 i = 0; i < products.length; i++) {
-
-            IItem.model memory element = IItem.model({
-
-                productId: products[i].productId,
-                cost: products[i].cost,
-                rating: products[i].rating,
-                quantity: products[i].quantity
-            });
-
-            convertedProducts[i] = element;
-        }
-        
-        return convertedProducts;
+        //Read all products from a shopping cart
+        return _shoppingCartsProducts[msg.sender][_shoppingCartsId];
     }
     
 }

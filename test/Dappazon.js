@@ -54,25 +54,9 @@ describe("Dappazon Contract", function () {
     
     it("Should buy a products and emit event with correct data", async function () {
       // Arrange
-      console.log('shoppingCartId', shoppingCartId);
-
-      /*
-        uint256 productId;
-        uint256 cost;
-        uint256 rating;
-        uint256 quantity;
-      */
-
       const shoppingCartData = await shoppingCart.read(shoppingCartId)
       const cartProductData = await shoppingCart.readProducts(shoppingCartId)
       const totalCart = cartProductData.reduce((acc, cur) => acc + cur.cost * cur.quantity, 0)
-      console.log('shoppingCartData', shoppingCartData)
-      console.log('cartProductData', cartProductData)
-      console.log('totalCart', totalCart)
-
-      const product1DataCheck0 = await product.read(productInfo1.id)
-
-      console.log('product1DataCheck', product1DataCheck0)
 
       // Act
       const result = await util.safExecution(
@@ -80,13 +64,11 @@ describe("Dappazon Contract", function () {
       
       console.log('Buy Event', result);
 
+      const productDataCheck = await product.read(productInfo1.id)
 
-      const product1DataCheck = await product.read(productInfo1.id)
-
-      console.log('product1DataCheck', product1DataCheck)
-      
       // Assert
-      expect(result).to.equal(1);
+      expect(productDataCheck.stock).to.equal(productInfo1["product"].stock - 2);
+      
     });
 
 

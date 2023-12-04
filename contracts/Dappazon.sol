@@ -35,15 +35,20 @@ contract Dappazon {
         IItem.model[] memory _shoppingCartProducts = shoppingCart.readProducts(shoppingCartId);
         uint256[] memory _productIds = new uint256[](_shoppingCartProducts.length);
         
+        require(_shoppingCartProducts.length > 0, "Shopping cart is empty");
         require(_shoppingCartInfo.totalCost <= msg.value, "Insufficient funds");
 
         for (uint256 i = 0; i < _shoppingCartProducts.length; i++) {
-            
+            require(false , "Test error in for-----");
             IItem.model memory item = _shoppingCartProducts[i];
             
             _productIds[i] = item.productId;
+
+            IProduct.model memory productData = product.read(item.productId);
             
-            require(product.read(item.productId).stock >= item.quantity, "Insufficient stock");
+            require(false , "Test error in for");
+
+            require(productData.stock == item.quantity , "Insufficient stock");
             
             require(product.updateStock(item), "Update stock failed");
         }
