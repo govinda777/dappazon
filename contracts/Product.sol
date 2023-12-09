@@ -4,38 +4,31 @@ pragma solidity ^0.8.9;
 import "./ShoppingCart.sol";
 
 interface IProduct {
-    //Model
     struct model {
         uint256 cost;
         uint256 rating;
         uint256 stock;
     }
 
-    //Events
     event ProductCreated(uint256 id, IProduct.model product);
     event ProductUpdated(uint256 id, IProduct.model product);
     event ProductUpdateStock(uint256 stock, IItem.model shoppingCartProducts);
     event ProductDeleted(uint256 id);
 
-    //Functions
     function create(IProduct.model memory _product) external returns (uint256);
-
     function read(uint256 _id) external view returns (IProduct.model memory);
-
     function update(uint256 _id, IProduct.model memory _product) external;
-
     function updateStock(IItem.model memory _shoppingCartProducts) external returns (bool);
-
     function del(uint256 _id) external;
 }
 
 contract Product is IProduct {
     address public owner;
     mapping(uint256 => IProduct.model) private _products;
-    mapping(address => uint256) public productsCount;
+    uint256 private _productCount;
 
     modifier onlyOwner() {
-        require(msg.sender == owner);
+        require(msg.sender == owner, "Not the owner");
         _;
     }
 
@@ -43,52 +36,38 @@ contract Product is IProduct {
         owner = msg.sender;
     }
 
-    function create(
-        IProduct.model memory _product
-    ) external override onlyOwner returns (uint256) {
-        productsCount[msg.sender]++;
-        _products[productsCount[msg.sender]] = _product;
-
-        uint256 productId = productsCount[msg.sender];
-
-        emit ProductCreated(productId, _product);
-
-        return productId;
+    function create(IProduct.model memory _product) external override onlyOwner returns (uint256) {
+        _productCount++;
+        _products[_productCount] = _product;
+        emit ProductCreated(_productCount, _product);
+        return _productCount;
     }
 
-    function read(
-        uint256 _id
-    ) public view override returns (IProduct.model memory) {
+    function read(uint256 _id) public view override returns (IProduct.model memory) {
+        require(_id <= _productCount, "Product does not exist");
         return _products[_id];
     }
 
-    function update(
-        uint256 _id,
-        IProduct.model memory _product
-    ) public override onlyOwner {
+    function update(uint256 _id, IProduct.model memory _product) public override onlyOwner {
+        require(_id <= _productCount, "Product does not exist");
         _products[_id] = _product;
         emit ProductUpdated(_id, _product);
     }
 
-    function updateStock(
-        IItem.model memory _shoppingCartProduct
-    ) external returns (bool) {
-
+    function updateStock(IItem.model memory _shoppingCartProduct) external override returns (bool) {
         uint256 productId = _shoppingCartProduct.productId;
-        IProduct.model memory productInfo = read(productId);
+        require(productId <= _productCount, "Product does not exist");
 
-        productInfo.stock = productInfo.stock - _shoppingCartProduct.quantity;
-
-        update(productId, productInfo);
-
-        productInfo = read(productId);
-
+        IProduct.model storage productInfo = _products[productId];
+        require(productInfo.stock >= _shoppingCartProduct.quantity, "Insufficient stock");
+        
+        productInfo.stock -= _shoppingCartProduct.quantity;
         emit ProductUpdateStock(productInfo.stock, _shoppingCartProduct);
-
         return true;
     }
 
     function del(uint256 _id) public override onlyOwner {
+        require(_id <= _productCount, "Product does not exist");
         delete _products[_id];
         emit ProductDeleted(_id);
     }

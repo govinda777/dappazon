@@ -86,9 +86,6 @@ describe("Product", function () {
       // Procura pelo evento ProductCreated no recibo da transação
       const shoppingCartProducts = util.getEvents(receipt, 'ProductUpdateStock').shoppingCartProducts;
     
-      console.log('shoppingCartProducts:', shoppingCartProducts);
-      console.log('productDataUpdateStock:', productDataUpdateStock);
-
       expect(shoppingCartProducts["productId"] instanceof BigNumber)
       expect(shoppingCartProducts["productId"]).to.equal(productDataUpdateStock.productId)
       expect(util.isGreaterThan(shoppingCartProducts["quantity"], productDataUpdateStock.quantity))

@@ -38,10 +38,13 @@ class util {
      * const ProductUpdated = await util.safExecution(() => product.update(1, productDataUpdate), 'ProductUpdated');
      */
     static async safExecution(promiseFunction, eventName) {
+
         const tx = await promiseFunction();
         const receipt = await tx.wait();
-    
-        return eventName ? util.getEvents(receipt, eventName) : receipt.events;
+
+        const response = eventName ? util.getEvents(receipt, eventName) : receipt.events;
+
+        return response;
     }
 }
 

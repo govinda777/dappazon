@@ -5,12 +5,13 @@ const util = require("./util");
 
 describe("ShoppingCart Contract", function () {
   let product, shoppingCart
-  let owner
+  let owner, ownerAddress
   let productInfo1, productInfo2
 
   // Antes de cada teste, faça o deploy dos contratos necessários e configure o estado inicial.
   beforeEach(async function () {
     [owner] = await ethers.getSigners()
+    ownerAddress = await owner.address
 
     const Product = await ethers.getContractFactory("Product")
     product = await Product.deploy()
@@ -33,8 +34,8 @@ describe("ShoppingCart Contract", function () {
 
   describe("Deployment", function () {
     it("Should set the right owner", async function () {
-      expect(await product.owner()).to.equal(owner.address)
-      expect(await shoppingCart.owner()).to.equal(owner.address)
+      expect(await product.owner()).to.equal(ownerAddress)
+      expect(await shoppingCart.owner()).to.equal(ownerAddress)
     });
   });
 
@@ -45,7 +46,7 @@ describe("ShoppingCart Contract", function () {
       
       //Act
       const shoppingCartCreated = await util.safExecution(
-        () => shoppingCart.create(), 'ShoppingCartCreated')
+        () => shoppingCart.create(ownerAddress), 'ShoppingCartCreated')
 
       //Assert
       expect(shoppingCartCreated.id).to.equal(1);
@@ -54,14 +55,27 @@ describe("ShoppingCart Contract", function () {
     it("Should read a product to the shopping cart", async function () {
       //Arrange
       const shoppingCartCreated = await util.safExecution(
-        () => shoppingCart.create(), 'ShoppingCartCreated')
+        () => shoppingCart.create(ownerAddress), 'ShoppingCartCreated')
+
+      const _item = [
+        productInfo1.id, 
+        ethers.BigNumber.from(2)
+      ];
+
+      await shoppingCart.addProduct(
+        ownerAddress,
+        shoppingCartCreated.id,
+        productInfo1.id,
+        ethers.BigNumber.from(2)
+      )
 
       //Act
-      const items = await shoppingCart.readProducts(shoppingCartCreated.id)
-      console.log("items", items)
-      
+      const items = await shoppingCart.readProducts(ownerAddress, shoppingCartCreated.id)
+      const cart = await shoppingCart.read(ownerAddress, shoppingCartCreated.id)
+
       //Assert
-      expect(items).to.equal([]);
+      expect(items.length).to.equal(1);
+      expect(cart.totalCost).to.equal(200);
     });
 
     // Test cases
@@ -114,7 +128,7 @@ describe("ShoppingCart Contract", function () {
       it(`Should add a product to the shopping cart ${testCase.input.length}`, async function () {
         // Arrange
         const shoppingCartCreated = await util.safExecution(
-            () => shoppingCart.create(), 'ShoppingCartCreated');
+            () => shoppingCart.create(ownerAddress), 'ShoppingCartCreated');
 
         var totalCostCalc = 0
         var totalCostInCartCalc = 0;
@@ -124,13 +138,13 @@ describe("ShoppingCart Contract", function () {
       
           const totalCost = (await product.read(item.productId)).cost * item.quantity;
 
-          await shoppingCart.addProduct(shoppingCartCreated.id, item.productId, item.quantity);
+          await shoppingCart.addProduct(ownerAddress, shoppingCartCreated.id, item.productId, item.quantity);
 
           totalCostCalc += totalCost;
         }
 
-        const shoppingCartInfo = await shoppingCart.read(shoppingCartCreated.id)
-        const items = await shoppingCart.readProducts(shoppingCartCreated.id)
+        const shoppingCartInfo = await shoppingCart.read(ownerAddress, shoppingCartCreated.id)
+        const items = await shoppingCart.readProducts(ownerAddress, shoppingCartCreated.id)
 
         for (const item of items) {
 

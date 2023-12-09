@@ -19,41 +19,40 @@ contract Dappazon {
         _;
     }
 
-    constructor(
+    constructor(address _productAddress,
                 address _orderAddress,
                 address _shoppingCartAddress) {
 
         owner = msg.sender;
-        product = new Product();
+        product = Product(_productAddress);
         order = Order(_orderAddress);
         shoppingCart = ShoppingCart(_shoppingCartAddress);
     }
 
-    function buy(uint256 shoppingCartId) public payable returns (uint256) {
+    function buy(address _user, uint256 _shoppingCartId) public payable returns (uint256) {
 
-        IShoppingCart.model memory _shoppingCartInfo = shoppingCart.read(shoppingCartId);
-        IItem.model[] memory _shoppingCartProducts = shoppingCart.readProducts(shoppingCartId);
+        IShoppingCart.model memory _shoppingCartInfo = shoppingCart.read(_user, _shoppingCartId);
+        IItem.model[] memory _shoppingCartProducts = shoppingCart.readProducts(_user, _shoppingCartId);
         uint256[] memory _productIds = new uint256[](_shoppingCartProducts.length);
         
+        require(_shoppingCartInfo.id != 0, "_shoppingCartInfo is not defined");
         require(_shoppingCartProducts.length > 0, "Shopping cart is empty");
         require(_shoppingCartInfo.totalCost <= msg.value, "Insufficient funds");
 
         for (uint256 i = 0; i < _shoppingCartProducts.length; i++) {
-            require(false , "Test error in for-----");
+            
             IItem.model memory item = _shoppingCartProducts[i];
             
             _productIds[i] = item.productId;
 
             IProduct.model memory productData = product.read(item.productId);
             
-            require(false , "Test error in for");
-
-            require(productData.stock == item.quantity , "Insufficient stock");
+            require(productData.stock >= item.quantity , "Insufficient stock");
             
             require(product.updateStock(item), "Update stock failed");
         }
         
-        uint256 orderId = order.create(shoppingCartId, _productIds);
+        uint256 orderId = order.create(_user, _shoppingCartId, _productIds);
 
         emit Buy(msg.sender, orderId, _productIds);
 
