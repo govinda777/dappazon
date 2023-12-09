@@ -57,7 +57,6 @@ contract Dappazon {
         emit Buy(msg.sender, orderId, _productIds);
 
         return orderId;
-        
     }
 
     function withdraw() public onlyOwner {

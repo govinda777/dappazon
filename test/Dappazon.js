@@ -52,22 +52,13 @@ describe("Dappazon Contract", function () {
     
     it("Should buy a products and emit event with correct data", async function () {
       // Arrange
-      console.log('shoppingCartInfo', shoppingCartInfo);
-
       const shoppingCartData = await shoppingCart.read(ownerAddress, shoppingCartInfo)
       const cartProductData = await shoppingCart.readProducts(ownerAddress, shoppingCartInfo)
       const totalCart = cartProductData.reduce((acc, cur) => acc + cur.cost * cur.quantity, 0)
 
-      console.log('shoppingCartInfo', shoppingCartInfo);
-      console.log('shoppingCartData', shoppingCartData);
-      console.log('cartProductData', cartProductData);
-      console.log('totalCart', totalCart);
-
       // Act
       const result = await util.safExecution(
         () => dappazon.buy(ownerAddress, shoppingCartInfo, {value: totalCart}), 'Buy');
-      
-      console.log('Buy Event', result);
 
       const productDataCheck = await product.read(productInfo1.id)
 
