@@ -5,7 +5,10 @@
 // will compile your contracts, add the Hardhat Runtime Environment's members to the
 // global scope, and execute the script.
 const hre = require("hardhat")
-const { items } = require("../src/items.json")
+const { ethers } = require("hardhat");
+const { products } = require("../src/products.json")
+
+const [deployer] = await ethers.getSigners()
 
 const tokens = (n) => {
   return ethers.utils.parseUnits(n.toString(), 'ether')
@@ -35,43 +38,53 @@ const sendTokens = async () => {
   console.log(`Tokens enviados com sucesso para ${recipientAddress}!`);
 }
 
-async function main() {
-  // Setup accounts
-  const [deployer] = await ethers.getSigners()
+const deploySmartContract = async (name) => {
+  
+  const Contract = await ethers.getContractFactory(name)
+  const contract = await Contract.deploy()
+  await contract.deployed()
 
-  // Deploy Dappazon
-  const Dappazon = await hre.ethers.getContractFactory("Dappazon")
-  const dappazon = await Dappazon.deploy()
-  await dappazon.deployed()
+  console.log(`Deployed ${name} Contract at: ${contract.address}\n`)
 
-  console.log(`Deployed Dappazon Contract at: ${dappazon.address}\n`)
+  return contract
+}
+
+const loadingProducts = async (product) => {
 
   // Listing items...
-  for (let i = 0; i < items.length; i++) {
-    const transaction = await dappazon.connect(deployer).list(
-      items[i].id,
-      items[i].name,
-      items[i].category,
-      items[i].image,
-      tokens(items[i].price),
-      items[i].rating,
-      items[i].stock,
+  for (let i = 0; i < products.length; i++) {
+
+    const productData = { 
+      cost: tokens(products[i].price), 
+      rating: 5, 
+      stock: products[i].stock 
+    }
+
+    const transaction = await product.connect(deployer).create(
+      productData
     )
 
     await transaction.wait();
 
-    console.log(`Listed item ${items[i].id}: ${items[i].name}`);
-
-    await sendTokens();
+    console.log(`Product ${i + 1} created`)
   }
-
-
+  
 }
 
+async function main() {
+  // Setup accounts
+  await sendTokens();
 
+  // Deploy Dappazon
+  const dappazon = await deploySmartContract("Dappazon") 
+  const product = await deploySmartContract("Product") 
+  const shoppingCart = await deploySmartContract("ShoppingCart")    
+  const order = await deploySmartContract("Order")
+  
+  loadingProducts(product)
+  
+}
 
-// We recommend this pattern to be able to use async/await everywhere
-// and properly handle errors.
 main().catch((error) => {
   console.error(error);
   process.exitCode = 1;

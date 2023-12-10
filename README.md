@@ -1,74 +1,6 @@
 
 # Dappazon
 
-TODO List :
-
-[] - Configurar o Sanity CMS no projeto
-[] - Configurar as entidades no banco Sanity
-[] - Configurar criar as Querys no banco Sanity
-[] - Criar um diagrama de dados do projeto
-
-[] - Melhorar a arquitetura do FE
-[] - Criar esquema das Lojas
-[] - Criar esquema das Vitrines
-[] - Cadastro de produto
-[] - Cadastro de meio de pagamento (taxa)
-[] - Criacao de token
-[] - Tests pagamento ETH
-[] - Tests pagamento BTC
-[] - Tests pagamento Token
-
-https://github.com/govinda777/dappazon
-
-Esse é o projeto que representa o de volta para o Futuro.
-
-Projeto responsável por Facilitar o comercio P2P.
-
-Tipo o que os Burgueses fizeram. 
-
-Mas por ser revolucionário assim como a Paz de Grand sobre a revolução .
-
-Meu plano está funcionando:
-
-1 - Auto conhecimento 
-2 - Ser pacifico 
-3 - Ajudar a Humanidade (Jesus reencarnou na Blockchain, para distribuir o seu Amor e sua igualdade ao proximo) pois o corpo e a mensagem de Cristo se materializou em uma ferramenta capaz de mudar o nosso sistema de coisas, 
-
-* Ferramentas adquiridas
-
-[x] - Capacidade de se organizar de forma pacífica [DONE]
-[x] - Capacidade de empatia [DONE]
-[_] - Capacidade de não escravizar um ao outro [WIP] (A humanidade usa e descarta tecnilogias ultrapassadas, esse cara que nos prometeu segurança não tá com nada, )
-
-<DESEJO_DA_HUMANIDADE> = 
-
-Eu Humanidade, desejo a igualdade, desejo o amor honesto, desejo ser completo.
-
-Eu Humanidade vou te falar, que o desejo mais profundo é não se humilhar.
-
-## Sanity
-
-mkdir studio
-cd studio
-sanity init
-
-## Cotizacao
-
-Como funciona o processo de pagamento para o Seller
-
-Orders Payment type PIX
-
-- 2 semanas - Taxa 2%
-- 24 H - Taxa 5%
-- 2 H - Taxa 7%
-
----
-
-> Obs : é necessário que o pedido (order) esteja no status FINISHED para iniciar a contagem do SLA para a Cotizacao
-
-
----
-
 **Dappazon: A Revolução do E-commerce Personalizado**
 
 Apresentando o Dappazon - a vanguarda das soluções de e-commerce. Uma plataforma inovadora que redefine a maneira como você visualiza, cria e gerencia sua loja online. Com o Dappazon, você não é apenas um usuário; você é um criador, um visionário e um empreendedor.
@@ -100,6 +32,60 @@ Junte-se à revolução do e-commerce. Descubra o Dappazon e crie a loja online 
 ## Requirements For Initial Setup
 - Install [NodeJS](https://nodejs.org/en/)
 
+
+## Funcionalidades
+
+Esse projeto é uma potente plataforma de ecommerce e facilitação do comercio com transparencia, auta disponibilidade e auditável plataforma de ecommerce.
+
+Aqui proteção e sigilo de dados é lei (lei de proteção aos dados).
+
++ (base) - White Label (Esse módulo é a base do sistema, pois aqui iremos cadastrar as lojas parceiras)
+    
+    * Cadastro de Loja
+        * Criação Vitrines / Categorias
+        * Gestão de conteudo
+        * SAC
+        * Area logada
+        * Taxa
+        * Divição de lucros
+        [*] Notificações
+        [*] Ferramentas de engajamento
+            [*] Rede social
+            [*] Blog
+
++ (base) - Usuários
+
+    * Tipo de usuário (Client, Lojista (Seller), Back_Office, Owner) 
+      > Focado na Lei de proteção de dados os acessos aos dados dessa plataforma seguem a seguinte diretriz
+
++ (plugin) - Marketing Place (Cadastro de Produtos / Taxas de pagamento / Fluxo fácil de Checkout)
+
+    * Cadastro
+        * Produtos
+        * Categorias
+
+    * Checkout
+    * Gateway de Pagamento
+    * Carrinho de compras
+    * Cupom de desconto (extra)
+
++ (plugin) - Marketing Place School Courses (Dependes on Marketing Place)
+
+    * NFT - Acess
+    * Larning Plataform
+
++ (plugin) - Marketing Place Events
+
+    * Tkt NFT Manager
+    * Events manager 
+    * Tkt Check (app mobile, dapp)
+
++ (plugin) - Marketing Place Gift Card
+
+    * Coin Manager
+    * Gift Card Manager
+
+
 ## Setting Up
 
 ### 1. Clone/Download the Repository
@@ -109,7 +95,6 @@ Junte-se à revolução do e-commerce. Descubra o Dappazon e crie a loja online 
 
 ### 3. Run tests
 `$ yarn test`
-
 
 ### 4. Start Hardhat node
 `$ yarn run node`
@@ -221,10 +206,6 @@ async function sendTokens() {
 
 sendTokens();
 ```
-
-Execute o script acima no console do Hardhat. Ele enviará a quantidade especificada (neste exemplo, 1 ETH) da conta do remetente para a conta do destinatário.
-
-Depois de executar o script, você deve ver a mensagem de confirmação e o hash da transação.
 
 ---
 
@@ -348,8 +329,47 @@ Se você encontrar algum problema enquanto utiliza o Dappazom, siga os passos ab
     }
 }
 
+---
 
---- 
+## Sanity
+
+mkdir studio
+cd studio
+sanity init
+
+### Para que serve o Sanity?
+
+O Sanity é uma plataforma de gerenciamento de conteúdo (CMS) que permite que você crie, edite e publique conteúdo de maneira rápida e fácil. Ele é usado por empresas como Airbnb, Spotify, Netflix, entre outras.
+
+### O que o Sanity ajuda a resolver nesse projeto?
+
+* Banco de dados de conteúdo
+* Criação de vitrines de produtos
+* Criação de páginas de produtos
+* Criação de um loja personalizada
+
+---
+
+## Taxas de venda.
+
+Ao realizar uma venda, o Seller paga uma taxa % sobre o valor da venda. Essa taxa é cobrada no momento da venda, ou seja, quando o cliente efetua o pagamento. Ao finalizar o processo de cotização, o Seller recebe o valor da venda menos a taxa %.
+
+Veja mais sobre as taxas de venda no link: [Taxas de venda](./taxas-de-venda.md)  
+
+
+## Cotizacao
+
+Cotização é o processo de cálculo do valor da venda. Esse processo leva tempo para ser concluído, pois depende de várias variáveis, como:
+
+* Garantia do produto
+* Processo de disputa
+* Processo de transferência de fundos
+
+---
+
+> Obs : é necessário que o pedido (order) esteja no status FINISHED para iniciar a contagem do SLA para a Cotizacao
+
+---
 
 # CI / CD
 
@@ -437,65 +457,6 @@ graph TD
     F --> G[Success payment approved]
     F --> H[Payment error]
 ```
-
-## Funcionalidades
-
-Esse projeto é uma potente plataforma de ecommerce e facilitação do comercio com transparencia, auta disponibilidade e auditável plataforma de ecommerce.
-
-Aqui proteção e sigilo de dados é lei (lei de proteção aos dados).
-
-+ (base) - White Label (Esse módulo é a base do sistema, pois aqui iremos cadastrar as lojas parceiras)
-    
-    * Cadastro de Loja
-        * Criação Vitrines / Categorias
-        * Gestão de conteudo
-        * SAC
-        * Area logada
-        * Taxa
-        * Divição de lucros
-        [*] Notificações
-        [*] Ferramentas de engajamento
-            [*] Rede social
-            [*] Blog
-
-+ (base) - Usuários
-
-    * Tipo de usuário (Client, Lojista (Seller), Back_Office, Owner) 
-      > Focado na Lei de proteção de dados os acessos aos dados dessa plataforma seguem a seguinte diretriz
-      
-      Tabela entidade vs read_write | role 
-
-      * private Client (Owner read_write, Seller read, Back_Office read)
-      * public Seller (Owner read_write, Client read, Back_Office read)
-      * private Back_Office (Seller read_write, Client read, Back_Office read)
-      * private Owner (Seller read_write, Client read, Back_Office read)
-
-+ (plugin) - Marketing Place (Cadastro de Produtos / Taxas de pagamento / Fluxo fácil de Checkout)
-
-    * Cadastro
-        * Produtos
-        * Categorias
-
-    * Checkout
-    * Gateway de Pagamento
-    * Carrinho de compras
-    * Cupom de desconto (extra)
-
-+ (plugin) - Marketing Place School Courses (Dependes on Marketing Place)
-
-    * NFT - Acess
-    * Larning Plataform
-    * 
-
-+ (plugin) - Marketing Place Events
-
-    * Tkt NFT Manager
-    * Events manager 
-    * Tkt Check (app mobile, dapp)
-
-+ (plugin) - Marketing Place Gift Card
-
-    * Coin Manager
 
 # Designer : Style site Layout 
 

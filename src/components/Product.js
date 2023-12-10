@@ -26,7 +26,7 @@ const Product = ({ item, provider, account, dappazon, togglePop }) => {
     const signer = await provider.getSigner()
 
     // Buy item...
-    let transaction = await dappazon.connect(signer).buy(item.id, {
+    let transaction = await dappazon.connect(signer).buy(signer, {
         value: item.cost
     })
     
@@ -36,7 +36,7 @@ const Product = ({ item, provider, account, dappazon, togglePop }) => {
     console.log({result})
 
     setHasBought(true)
-}
+  }
 
   useEffect(() => {
     fetchDetails()

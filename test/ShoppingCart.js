@@ -57,11 +57,6 @@ describe("ShoppingCart Contract", function () {
       const shoppingCartCreated = await util.safExecution(
         () => shoppingCart.create(ownerAddress), 'ShoppingCartCreated')
 
-      const _item = [
-        productInfo1.id, 
-        ethers.BigNumber.from(2)
-      ];
-
       await shoppingCart.addProduct(
         ownerAddress,
         shoppingCartCreated.id,
@@ -118,10 +113,26 @@ describe("ShoppingCart Contract", function () {
       }
     };
 
+    const TEST_CASE_4__ADD_PRODUCT_TO_CART_SAME_PRODUCT = {
+      input: 
+          [ 
+            {shoppingCartId: 1, productId: 1, quantity: 1},
+            {shoppingCartId: 1, productId: 1, quantity: 1},
+            {shoppingCartId: 1, productId: 3, quantity: 1},
+            {shoppingCartId: 1, productId: 2, quantity: 1},
+          ]
+      ,
+      expected: {
+          id: 1,
+          totalCost: 400 // Supondo que o custo do produto seja 100
+      }
+    };
+
     const testCases = [
       TEST_CASE_1__ADD_PRODUCT_TO_CART,
       TEST_CASE_2__ADD_PRODUCT_TO_CART,
-      TEST_CASE_3__ADD_PRODUCT_TO_CART
+      TEST_CASE_3__ADD_PRODUCT_TO_CART,
+      TEST_CASE_4__ADD_PRODUCT_TO_CART_SAME_PRODUCT
     ];
 
     testCases.forEach(function (testCase) {
@@ -132,6 +143,8 @@ describe("ShoppingCart Contract", function () {
 
         var totalCostCalc = 0
         var totalCostInCartCalc = 0;
+
+        const totalItens = new Set(testCase.input.map(item => item.productId)).size;
         
         // Act
         for (const item of testCase.input) {
@@ -154,6 +167,7 @@ describe("ShoppingCart Contract", function () {
         }
 
         // Assert
+        expect(items.length).to.equal(totalItens)
         expect(totalCostCalc === totalCostInCartCalc).to.equal(true)        
         expect(util.isEqual(shoppingCartInfo.totalCost, totalCostCalc)).to.equal(true)
         expect(util.isEqual(shoppingCartInfo.totalCost, testCase.expected.totalCost)).to.equal(true)
