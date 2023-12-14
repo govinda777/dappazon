@@ -8,7 +8,7 @@ const hre = require("hardhat")
 const { ethers } = require("hardhat");
 const { products } = require("../src/products.json")
 
-const [deployer] = await ethers.getSigners()
+var deployer = null
 
 const tokens = (n) => {
   return ethers.utils.parseUnits(n.toString(), 'ether')
@@ -38,10 +38,10 @@ const sendTokens = async () => {
   console.log(`Tokens enviados com sucesso para ${recipientAddress}!`);
 }
 
-const deploySmartContract = async (name) => {
+const deploySmartContract = async (name, args = []) => {
   
   const Contract = await ethers.getContractFactory(name)
-  const contract = await Contract.deploy()
+  const contract = await Contract.deploy(...args)
   await contract.deployed()
 
   console.log(`Deployed ${name} Contract at: ${contract.address}\n`)
@@ -49,18 +49,20 @@ const deploySmartContract = async (name) => {
   return contract
 }
 
-const loadingProducts = async (product) => {
+const loadingProducts = async (productSmartContract) => {
+
+  console.log('deployer', deployer != null)
 
   // Listing items...
   for (let i = 0; i < products.length; i++) {
-
+    
     const productData = { 
       cost: tokens(products[i].price), 
       rating: 5, 
       stock: products[i].stock 
     }
-
-    const transaction = await product.connect(deployer).create(
+    
+    const transaction = await productSmartContract.connect(deployer).create(
       productData
     )
 
@@ -73,16 +75,17 @@ const loadingProducts = async (product) => {
 
 async function main() {
   // Setup accounts
+  [deployer] = await ethers.getSigners()
   await sendTokens();
 
   // Deploy Dappazon
-  const dappazon = await deploySmartContract("Dappazon") 
-  const product = await deploySmartContract("Product") 
-  const shoppingCart = await deploySmartContract("ShoppingCart")    
-  const order = await deploySmartContract("Order")
   
-  loadingProducts(product)
-  
+  const productSmartContract = await deploySmartContract("Product") 
+  const shoppingCartSmartContract = await deploySmartContract("ShoppingCart", [productSmartContract.address])    
+  const orderSmartContract = await deploySmartContract("Order")
+  const dappazonSmartContract = await deploySmartContract("Dappazon", [productSmartContract.address, orderSmartContract.address, shoppingCartSmartContract.address]) 
+
+  loadingProducts(productSmartContract)
 }
 
 main().catch((error) => {

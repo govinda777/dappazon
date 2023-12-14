@@ -7,6 +7,9 @@ module.exports = {
       // configurações da rede local
     }
   },
+  paths: {
+    artifacts: './src/abis',
+  },
   mocha: {
     reporter: 'mochawesome'
   }

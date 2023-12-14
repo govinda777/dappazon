@@ -7,7 +7,8 @@ import Section from './components/Section'
 import Product from './components/Product'
 
 // ABIs
-import Dappazon from './abis/Dappazon.json'
+import DappazonSC from './abis/contracts/Dappazon.sol/Dappazon.json'
+import ProductSC from './abis/contracts/Product.sol/Product.json'
 
 // Config
 import config from './config.json'
@@ -15,6 +16,7 @@ import config from './config.json'
 function App() {
   const [provider, setProvider] = useState(null)
   const [dappazon, setDappazon] = useState(null)
+  const [product, setProduct] = useState(null)
 
   const [account, setAccount] = useState(null)
 
@@ -36,9 +38,21 @@ function App() {
     setProvider(provider)
     const network = await provider.getNetwork()
 
-    const dappazon = new ethers.Contract(config[network.chainId].dappazon.address, Dappazon, provider)
+    const dappazon = new ethers.Contract(
+      config[network.chainId].dappazon.address, 
+      DappazonSC.abi, 
+      provider)
+
     setDappazon(dappazon)
 
+    const productAddress= await dappazon.product();
+
+    const product = new ethers.Contract(productAddress, ProductSC.abi, provider);
+
+    const p1 = await product.read(1)
+
+    console.log(p1)
+    /*
     const items = []
 
     for (var i = 0; i < 9; i++) {
@@ -53,6 +67,7 @@ function App() {
     setElectronics(electronics)
     setClothing(clothing)
     setToys(toys)
+    */
   }
 
   useEffect(() => {

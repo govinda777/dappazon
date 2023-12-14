@@ -25,7 +25,8 @@
     "test": "npx hardhat test --network hardhat --config hardhat.local.config.js",
     "test:file": "npx hardhat test --network hardhat --config hardhat.local.config.js",
     "eject": "react-scripts eject",
-    "deploy": "npx hardhat run ./scripts/deploy.js --network goerli"
+    "deploy": "npx hardhat run ./scripts/deploy.js --network goerli",
+    "compile": "npx hardhat compile --network hardhat --config hardhat.local.config.js"
   },
   "eslintConfig": {
     "extends": [
