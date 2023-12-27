@@ -21,6 +21,86 @@ describe("Product", function () {
 
   describe("Product management", function () {
 
+    const TEST_CASE_1__READ_ALL = {
+      input: { 
+        products: [{cost: 100, rating: 5, stock: 10}],
+      },
+      
+      expected: {
+          total: 1,
+      }
+    };
+
+    const TEST_CASE_2__READ_ALL = {
+      input: { 
+        products: [
+          {cost: 100, rating: 5, stock: 10},
+          {cost: 100, rating: 5, stock: 10}
+        ],
+      },
+      expected: {
+          total: 2,
+      }
+    };
+
+    const TEST_CASE_3__READ_ALL = {
+      input: { 
+        products: [
+          {cost: 100, rating: 5, stock: 10},
+          {cost: 100, rating: 5, stock: 10},
+          {cost: 100, rating: 5, stock: 10}
+        ],
+      },
+      expected: {
+          total: 3,
+      }
+    };
+
+    const TEST_CASE_4__READ_ALL = {
+      input: { 
+        products: [
+          {cost: 100, rating: 5, stock: 10},
+          {cost: 100, rating: 5, stock: 10},
+          {cost: 100, rating: 5, stock: 10},
+          {cost: 100, rating: 5, stock: 10},
+          {cost: 100, rating: 5, stock: 10},
+          {cost: 100, rating: 5, stock: 10},
+          {cost: 100, rating: 5, stock: 10},
+          {cost: 100, rating: 5, stock: 10},
+          {cost: 100, rating: 5, stock: 10},
+          {cost: 100, rating: 5, stock: 10},
+          {cost: 100, rating: 5, stock: 10},
+          {cost: 100, rating: 5, stock: 10}
+        ],
+      },
+      expected: {
+          total: 12,
+      }
+    };
+
+    const testCases = [
+      TEST_CASE_1__READ_ALL, 
+      TEST_CASE_2__READ_ALL, 
+      TEST_CASE_3__READ_ALL,
+      TEST_CASE_4__READ_ALL];
+
+    testCases.forEach(function (testCase) {
+      it(`Should read all products ${testCase.input.products.length}`, async function () {
+        
+        //Arrange
+        testCase.input.products.forEach(async function (item) {
+          await util.safExecution(
+            () => product.create(item), 'ProductCreated')
+        });
+
+        //Act
+        const result = await product.readAll();
+
+        //Assert
+        expect(result.length).to.equal(testCase.expected.total);
+      });
+    });
+
     it("Should create a product and emit event with correct data", async function () {
       const productData = { cost: 100, rating: 5, stock: 10 }
   

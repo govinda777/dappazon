@@ -13,6 +13,9 @@ import ProductSC from './abis/contracts/Product.sol/Product.json'
 // Config
 import config from './config.json'
 
+// Services
+import { ProductService } from './services/ProductService'
+
 function App() {
   const [provider, setProvider] = useState(null)
   const [dappazon, setDappazon] = useState(null)
@@ -39,19 +42,18 @@ function App() {
     const network = await provider.getNetwork()
 
     const dappazon = new ethers.Contract(
-      config[network.chainId].dappazon.address, 
-      DappazonSC.abi, 
+      config[network.chainId].dappazon.address,
+      DappazonSC.abi,
       provider)
 
     setDappazon(dappazon)
 
-    const productAddress= await dappazon.product();
+    const productAddress = await dappazon.product();
 
-    const product = new ethers.Contract(productAddress, ProductSC.abi, provider);
+    const productService = new ProductService(productAddress, provider);
+    console.log('----------');
+    setProduct(await productService.readAll());
 
-    const p1 = await product.read(1)
-
-    console.log(p1)
     /*
     const items = []
 
@@ -79,6 +81,8 @@ function App() {
       <Navigation account={account} setAccount={setAccount} />
 
       <h2>Dappazon Best Sellers .</h2>
+      
+      
 
       {electronics && clothing && toys && (
         <>

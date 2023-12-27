@@ -17,6 +17,7 @@ interface IProduct {
 
     function create(IProduct.model memory _product) external returns (uint256);
     function read(uint256 _id) external view returns (IProduct.model memory);
+    function readAll() external view returns (uint256[] memory);
     function update(uint256 _id, IProduct.model memory _product) external;
     function updateStock(IItem.model memory _shoppingCartProducts) external returns (bool);
     function del(uint256 _id) external;
@@ -41,6 +42,14 @@ contract Product is IProduct {
         _products[_productCount] = _product;
         emit ProductCreated(_productCount, _product);
         return _productCount;
+    }
+
+    function readAll() public view returns (uint256[] memory) {
+        uint256[] memory productIds = new uint256[](_productCount);
+        for (uint256 i = 1; i <= _productCount; i++) {
+            productIds[i - 1] = i;
+        }
+        return productIds;
     }
 
     function read(uint256 _id) public view override returns (IProduct.model memory) {

@@ -1,4 +1,4 @@
-import { apiVersion, dataset, projectId, useCdn } from 'lib/sanity.api'
+import { apiVersion, dataset, projectId, useCdn } from './sanity.api'
 import {
   indexQuery,
   type Post,
@@ -7,7 +7,7 @@ import {
   postSlugsQuery,
   type Settings,
   settingsQuery,
-} from 'lib/sanity.queries'
+} from './sanity.queries'
 import { createClient, type SanityClient } from 'next-sanity'
 
 export function getClient(preview?: { token: string }): SanityClient {
