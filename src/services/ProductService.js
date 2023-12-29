@@ -26,7 +26,7 @@ export class ProductService {
                     (productCms) => parseInt(productCms.id,10) === product.toNumber())
             })
         }
-
+        console.log(result);
         return result;
     }
     

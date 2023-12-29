@@ -8,7 +8,8 @@ export class ProductRepository {
 
     async readAll() {
         const products = await this.client.fetch(`*[_type == "product"]{
-            id, 
+            id,
+            name,
             description,
             "image": image.asset->url
         }`);

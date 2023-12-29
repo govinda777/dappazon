@@ -84,7 +84,7 @@ function App() {
       
       {product && (
         <>
-          <Section title={"Clothing & Jewelry"} items={product} />
+          <Section title={"Clothing & Jewelry"} items={product} togglePop={togglePop}/>
         </>
       )}
 
