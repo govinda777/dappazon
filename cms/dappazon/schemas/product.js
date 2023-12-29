@@ -14,16 +14,6 @@ export default {
         title: 'ID'
     },
     {
-        name: 'stock',
-        type: 'number',
-        title: 'Stock'
-    },
-    {
-        name: 'price',
-        type: 'number',
-        title: 'Price'
-    },
-    {
         name: 'category',
         type: 'string',
         title: 'Category'
@@ -40,9 +30,9 @@ export default {
         title: 'Description'
     },
     {
-        name: 'banner',
+        name: 'image',
         type: 'image',
-        title: 'Banner'
+        title: 'Image'
     },
     {
         name: 'imageList',

@@ -82,7 +82,11 @@ function App() {
 
       <h2>Dappazon Best Sellers .</h2>
       
-      
+      {product && (
+        <>
+          <Section title={"Clothing & Jewelry"} items={product} />
+        </>
+      )}
 
       {electronics && clothing && toys && (
         <>
