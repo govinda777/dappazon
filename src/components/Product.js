@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { ethers } from 'ethers'
+import { ShoppingCartService } from '../services/ShoppingCartService'
 
 // Components
 import Rating from './Rating'
@@ -20,6 +21,11 @@ const Product = ({ item, provider, account, dappazon, togglePop }) => {
 
     const order = await dappazon.orders(account, orders[0].args.orderId)
     setOrder(order)
+  }
+
+  const addInShoppingCart = async () => {
+    const shoppingCartAddress = await dappazon.shoppingCart();
+    const shoppingCartService = new ShoppingCartService(shoppingCartAddress, provider);
   }
 
   const buyHandler = async () => {
@@ -65,10 +71,6 @@ const Product = ({ item, provider, account, dappazon, togglePop }) => {
 
           <p>
             {item.description}
-
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Minima rem, iusto,
-            consectetur inventore quod soluta quos qui assumenda aperiam, eveniet doloribus
-            commodi error modi eaque! Iure repudiandae temporibus ex? Optio!
           </p>
         </div>
 

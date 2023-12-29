@@ -23,7 +23,7 @@ interface IShoppingCart {
     event ShoppingCartCreated(address _user, uint256 id);
     event ShoppingCartAddProduct(address _user, uint256 id, IShoppingCart.model shoppingCartInfo, IItem.model[] itemsInfo);
     event ShoppingCartRemovedProduct(address _user, uint256 shoppingCartId, uint256 productId, uint256 quantity);
-
+    
     //Functions
     function create(address _user) external returns (uint256);
 
