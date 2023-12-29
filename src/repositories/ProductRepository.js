@@ -7,7 +7,11 @@ export class ProductRepository {
     }
 
     async readAll() {
-        const products = await this.client.fetch('*[_type == "product"]{id, description}');
+        const products = await this.client.fetch(`*[_type == "product"]{
+            id, 
+            description,
+            "image": image.asset->url
+        }`);
         return products;
     }
 

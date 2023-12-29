@@ -3,7 +3,6 @@ import ProductSC from '../abis/contracts/Product.sol/Product.json'
 import { client } from '../lib/sanity'
 import { ProductRepository } from '../repositories/ProductRepository'
 
-// class CRUD to contract Product 
 export class ProductService {
     
     constructor(productAddress, provider) {
@@ -12,26 +11,23 @@ export class ProductService {
         this.productRepository = new ProductRepository(client);
     }
 
+    // TODO : Implementar paginacao
     async readAll() {
-        console.log('>readAll');
         const products = await this.product.readAll();
-
-        console.log('>products', products);
-
         const productsCms = await this.productRepository.readAll();
-        console.log('>productsCms', productsCms);
         
-        const response = products.map((product) => {
-            const productCms = productsCms.find((productCms) => productCms._id === product.id);
-            return {
-                ...product,
-                ...productCms,
-            };
-        });
+        const result = []
 
-        console.log('>response', response);
+        for (const product of products) {
+            const productDetails = await this.product.read(product);
+            result.push({
+                ...productDetails,
+                ...productsCms.find(
+                    (productCms) => parseInt(productCms.id,10) === product.toNumber())
+            })
+        }
 
-        return response;
+        return result;
     }
     
     async read(id) {
