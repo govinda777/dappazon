@@ -14,12 +14,18 @@ interface IItem {
 }
 
 interface IShoppingCart {
+
+    enum ShoppingCartStatus { Active, Finalized }
+
     struct model {
         uint256 id;
         uint256 totalCost;
+        ShoppingCartStatus status;
     }
 
     //Events
+    event ShoppingCartFinalized(address _user, IShoppingCart.model shoppingCartInfo);
+    event ShoppingCartCreated1(address _user, uint256 id);
     event ShoppingCartCreated(address _user, uint256 id);
     event ShoppingCartAddProduct(address _user, uint256 id, IShoppingCart.model shoppingCartInfo, IItem.model[] itemsInfo);
     event ShoppingCartRemovedProduct(address _user, uint256 shoppingCartId, uint256 productId, uint256 quantity);
@@ -65,17 +71,41 @@ contract ShoppingCart is IShoppingCart {
     }
 
     function create(address _user) public returns (uint256) {
+
+        if (shoppingCartsCount[_user] != 0 && 
+            _shoppingCarts[_user][shoppingCartsCount[_user]].status == IShoppingCart.ShoppingCartStatus.Active) {
+            
+            uint256 _shoppingCartsId = shoppingCartsCount[_user];
+
+            emit ShoppingCartCreated(_user, _shoppingCartsId);
+
+            return _shoppingCarts[_user][_shoppingCartsId].id;
+        }
         
         IShoppingCart.model memory _shoppingCart;
 
         shoppingCartsCount[_user]++;
+
         _shoppingCart.id = shoppingCartsCount[_user];
+        _shoppingCart.status = IShoppingCart.ShoppingCartStatus.Active;
 
         _shoppingCarts[_user][_shoppingCart.id] = _shoppingCart;
 
         emit ShoppingCartCreated(_user, _shoppingCart.id);
 
         return _shoppingCart.id;
+    }
+
+
+    function finalizeCart(address _user) public {
+
+        uint256 _shoppingCartsId = shoppingCartsCount[_user];
+
+        require(_shoppingCarts[_user][_shoppingCartsId].status == ShoppingCartStatus.Active, "Cart is already finalized");
+        
+        _shoppingCarts[_user][_shoppingCartsId].status = ShoppingCartStatus.Finalized;
+
+        emit ShoppingCartFinalized(_user, _shoppingCarts[_user][_shoppingCartsId]);
     }
 
     function addProduct(

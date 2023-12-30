@@ -174,8 +174,49 @@ describe("ShoppingCart Contract", function () {
       });
     });
 
+    it("Should create two times the shopping cart, expected return the same id", async function () {
+      //Arrange
+      
+      //Act
+      const shoppingCartCreated1 = await util.safExecution(
+        () => shoppingCart.create(ownerAddress), 'ShoppingCartCreated')
+
+      const shoppingCartCreated2 = await util.safExecution(
+        () => shoppingCart.create(ownerAddress), 'ShoppingCartCreated')
+
+      //Assert
+      expect(shoppingCartCreated1.id).to.equal(shoppingCartCreated2.id);
+    });
+
+    it("Should have been created twice, but the cart was finalized the first time, expecting another ID to be returned", async function () {
+      //Arrange
+      const shoppingCartCreated1 = await util.safExecution(
+        () => shoppingCart.create(ownerAddress), 'ShoppingCartCreated')
+
+      const shoppingCartFinalized = await util.safExecution(
+          () => shoppingCart.finalizeCart(ownerAddress), 'ShoppingCartFinalized')
+
+      const shoppingCartCreated2 = await util.safExecution(
+        () => shoppingCart.create(ownerAddress), 'ShoppingCartCreated')
+      
+      //Act
+      const response = await shoppingCart.read(ownerAddress, shoppingCartCreated1.id)
+
+      //Assert
+      expect(shoppingCartCreated1.id !== shoppingCartCreated2.id).to.equal(true);
+      expect(shoppingCartFinalized.shoppingCartInfo.id).to.equal(shoppingCartCreated1.id);
+      expect(response.id).to.equal(shoppingCartCreated1.id);
+      expect(response.status).to.equal(1); // 1 = Finalized
+    });
+
     it("Should remove a product from the shopping cart", async function () {
-  
+      
+      //Arrange
+      
+      //Act
+
+      //Assert
+      expect(1).to.equal(1);
     });
   
   });
