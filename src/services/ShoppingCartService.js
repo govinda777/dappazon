@@ -3,12 +3,13 @@ import ShoppingCartSC from '../abis/contracts/ShoppingCart.sol/ShoppingCart.json
 
 export class ShoppingCartService {
 
-    constructor(shoppingCartAddress, provider) {
-        
+    constructor(shoppingCartAddress, provider, signer) {
+
         this.shoppingCart = new ethers.Contract(shoppingCartAddress, ShoppingCartSC.abi, provider);
     }
 
     async read(account, shoppingCartId) {
+
         const shoppingCart = await this.shoppingCart.read(account, shoppingCartId);
 
         const products = await this.shoppingCart.readProducts(account, shoppingCartId);

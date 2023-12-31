@@ -12,7 +12,10 @@ const Product = ({ item, provider, account, dappazon, togglePop }) => {
   const [hasBought, setHasBought] = useState(false)
 
   const fetchDetails = async () => {
-    const events = await dappazon.queryFilter("Buy")
+   
+    await addInShoppingCart();
+
+    /*const events = await dappazon.queryFilter("Buy")
     const orders = events.filter(
       (event) => event.args.buyer === account && event.args.itemId.toString() === item.id.toString()
     )
@@ -20,12 +23,23 @@ const Product = ({ item, provider, account, dappazon, togglePop }) => {
     if (orders.length === 0) return
 
     const order = await dappazon.orders(account, orders[0].args.orderId)
-    setOrder(order)
+    setOrder(order)*/
   }
 
   const addInShoppingCart = async () => {
+    const productAddress = await dappazon.product();
     const shoppingCartAddress = await dappazon.shoppingCart();
-    const shoppingCartService = new ShoppingCartService(shoppingCartAddress, provider);
+    const signer = provider.getSigner();
+    const shoppingCartService = new ShoppingCartService(shoppingCartAddress, signer);
+
+    const shoppingCartModel = await shoppingCartService.create("0x17eDfB8a794ec4f13190401EF7aF1c17f3cc90c5");
+
+    console.log(">-----------------")
+    console.log({shoppingCartModel})
+    console.log("account", account)
+    console.log("item", item)
+    console.log(">-----------------")
+
   }
 
   const buyHandler = async () => {

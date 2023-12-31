@@ -2,9 +2,12 @@ import { ethers } from 'ethers'
 
 const Navigation = ({ account, setAccount }) => {
     const connectHandler = async () => {
+        console.log("-------------")
         const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-        const account = ethers.utils.getAddress(accounts[0])
+        console.log({accounts});
+        const account = ethers.utils.getAddress(accounts[0]);
         setAccount(account);
+        console.log("-------------")
     }
 
     return (
