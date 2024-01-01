@@ -1,32 +1,32 @@
-import { ethers } from 'ethers'
-import ShoppingCartSC from '../abis/contracts/ShoppingCart.sol/ShoppingCart.json'
+
+import { client } from '../lib/sanity'
+import { ShoppingCartRepository } from '../repositories/ShoppingCartRepository.js'
 
 export class ShoppingCartService {
 
-    constructor(shoppingCartAddress, provider, signer) {
+    constructor() {
 
-        this.shoppingCart = new ethers.Contract(shoppingCartAddress, ShoppingCartSC.abi, provider);
+        this.repository = new ShoppingCartRepository(client);
     }
 
-    async read(account, shoppingCartId) {
-
-        const shoppingCart = await this.shoppingCart.read(account, shoppingCartId);
-
-        const products = await this.shoppingCart.readProducts(account, shoppingCartId);
-
-        return {
-            shoppingCart,
-            products
-        };
+    async get(account) {
+        const shoppingCart = await this.repository.get(account);
+        return shoppingCart;
     }
 
-    async create(account) {
-        const shoppingCartId = await this.shoppingCart.create(account);
-        return shoppingCartId;
+    create(account, productsId, cuponsId) {
+        this.repository.get(account).then((shoppingCart) => {
+            if (shoppingCart) {
+                return shoppingCart;
+            } else {
+                return this.repository.create(account, productsId, cuponsId);
+            }
+        });
     }
 
-    async addItem(account, shoppingCartId, productId, quantity) {
-        await this.shoppingCart.addItem(account, shoppingCartId, productId, quantity);
+    async addProduct(account, productId, quantity) {
+
+        await this.shoppingCart.addProduct(account, productId, quantity);
     }
 
 }

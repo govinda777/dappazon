@@ -1,4 +1,4 @@
-export default     {
+export default {
   name: 'seller',
   type: 'document',
   title: 'Seller',

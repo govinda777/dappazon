@@ -30,7 +30,7 @@ export default {
         to: [{type: 'seller'}]
     },
     {
-        name: 'description',
+        name: 'desc',
         type: 'text',
         title: 'Description'
     },
