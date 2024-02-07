@@ -2,7 +2,6 @@
 pragma solidity ^0.8.9;
 
 import "./Product.sol";
-import "./ShoppingCart.sol";
 
 interface IOrder {
 

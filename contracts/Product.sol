@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.9;
 
-import "./ShoppingCart.sol";
-
 interface IProduct {
     struct model {
         uint256 cost;
@@ -12,14 +10,14 @@ interface IProduct {
 
     event ProductCreated(uint256 id, IProduct.model product);
     event ProductUpdated(uint256 id, IProduct.model product);
-    event ProductUpdateStock(uint256 stock, IItem.model shoppingCartProducts);
+    event ProductUpdateStock(uint256 id, uint256 stock);
     event ProductDeleted(uint256 id);
 
     function create(IProduct.model memory _product) external returns (uint256);
     function read(uint256 _id) external view returns (IProduct.model memory);
     function readAll() external view returns (uint256[] memory);
     function update(uint256 _id, IProduct.model memory _product) external;
-    function updateStock(IItem.model memory _shoppingCartProducts) external returns (bool);
+    function updateStock(uint256 _id, uint256 stock) external returns (IProduct.model memory);
     function del(uint256 _id) external;
 }
 
@@ -63,8 +61,8 @@ contract Product is IProduct {
         emit ProductUpdated(_id, _product);
     }
 
-    function updateStock(IItem.model memory _shoppingCartProduct) external override returns (bool) {
-        uint256 productId = _shoppingCartProduct.productId;
+    function updateStock(uint256 _id, uint256 stock) external override returns (bool) {
+        uint256 productId = _id;
         require(productId <= _productCount, "Product does not exist");
 
         IProduct.model storage productInfo = _products[productId];

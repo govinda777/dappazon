@@ -22,7 +22,7 @@ export default {
                     type: 'reference',
                     to: [
                         {
-                            type: 'shoppingCartProducts'
+                            type: 'shoppingCartProduct'
                         }
                     ]
                 }

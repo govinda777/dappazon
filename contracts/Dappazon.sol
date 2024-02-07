@@ -3,7 +3,6 @@ pragma solidity ^0.8.9;
 
 import "./Product.sol";
 import "./Order.sol";
-import "./ShoppingCart.sol";
 
 contract Dappazon {
 
@@ -20,15 +19,14 @@ contract Dappazon {
     }
 
     constructor(address _productAddress,
-                address _orderAddress,
-                address _shoppingCartAddress) {
+                address _orderAddress) {
 
         owner = msg.sender;
         product = Product(_productAddress);
         order = Order(_orderAddress);
-        shoppingCart = ShoppingCart(_shoppingCartAddress);
     }
-
+    
+    //0x17eDfB8a794ec4f13190401EF7aF1c17f3cc90c5
     function buy(address _user, uint256 _shoppingCartId) public payable returns (uint256) {
 
         IShoppingCart.model memory _shoppingCartInfo = shoppingCart.read(_user, _shoppingCartId);
@@ -39,6 +37,7 @@ contract Dappazon {
         require(_shoppingCartProducts.length > 0, "Shopping cart is empty");
         require(_shoppingCartInfo.totalCost <= msg.value, "Insufficient funds");
 
+        //Validacao
         for (uint256 i = 0; i < _shoppingCartProducts.length; i++) {
             
             IItem.model memory item = _shoppingCartProducts[i];
@@ -54,7 +53,7 @@ contract Dappazon {
         
         uint256 orderId = order.create(_user, _shoppingCartId, _productIds);
 
-        emit Buy(msg.sender, orderId, _productIds);
+        emit Buy(_user, orderId, _productIds);
 
         return orderId;
     }
