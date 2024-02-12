@@ -1,61 +1,50 @@
-// SPDX-License-Identifier: UNLICENSED
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.9;
 
 import "./Product.sol";
-import "./Order.sol";
 
 contract Dappazon {
 
     address public owner;
     IProduct public product;
-    IOrder public order;
 
-    event Buy(address buyer, uint256 orderId, uint256[] productIds);
+    event PurchaseMade(address buyer, uint256[] products, uint256[] quantities);
     
     modifier onlyOwner() {
         require(msg.sender == owner);
         _;
     }
 
-    constructor(address _productAddress,
-                address _orderAddress) {
+    constructor(address _productAddress) {
 
         owner = msg.sender;
         product = Product(_productAddress);
-        order = Order(_orderAddress);
     }
     
-    //0x17eDfB8a794ec4f13190401EF7aF1c17f3cc90c5
-    function buy(address _user, uint256[] products) public payable returns (uint256) {
+    function buy(uint256[] memory productIds, uint256[] memory quantities) public payable returns (bool) {
 
-        IShoppingCart.model memory _shoppingCartInfo = shoppingCart.read(_user, _shoppingCartId);
-        IItem.model[] memory _shoppingCartProducts = shoppingCart.readProducts(_user, _shoppingCartId);
-        uint256[] memory _productIds = new uint256[](_shoppingCartProducts.length);
-        
-        require(_shoppingCartInfo.id != 0, "_shoppingCartInfo is not defined");
-        require(_shoppingCartProducts.length > 0, "Shopping cart is empty");
-        require(_shoppingCartInfo.totalCost <= msg.value, "Insufficient funds");
+        require(productIds.length == quantities.length, "Product IDs and quantities length mismatch");
+        require(productIds.length > 0, "No products specified");
 
-        //Validacao
-        for (uint256 i = 0; i < _shoppingCartProducts.length; i++) {
-            
-            IItem.model memory item = _shoppingCartProducts[i];
-            
-            _productIds[i] = item.productId;
+        uint256 totalCost = 0;
 
-            IProduct.model memory productData = product.read(item.productId);
-            
-            require(productData.stock >= item.quantity , "Insufficient stock");
-            
-            require(product.updateStock(item), "Update stock failed");
+        for (uint256 i = 0; i < productIds.length; i++) {
+            IProduct.model memory productData = product.read(productIds[i]);
+            require(productData.stock >= quantities[i], "Insufficient stock");
+            totalCost += productData.cost * quantities[i];
         }
-        
-        uint256 orderId = order.create(_user, _shoppingCartId, _productIds);
 
-        emit Buy(_user, orderId, _productIds);
+        require(totalCost <= msg.value, "Insufficient funds");
 
-        return orderId;
+        for (uint256 i = 0; i < productIds.length; i++) {
+            require(product.updateStock(productIds[i], quantities[i]), "Update stock failed");
+        }
+
+        emit PurchaseMade(msg.sender, productIds, quantities);
+
+        return true;
     }
+
 
     function withdraw() public onlyOwner {
         (bool success, ) = owner.call{value: address(this).balance}("");

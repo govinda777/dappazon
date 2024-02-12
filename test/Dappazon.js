@@ -14,36 +14,23 @@ describe("Dappazon Contract", function () {
 
     // Deploy the Product, Order, and ShoppingCart contracts
     const Product = await ethers.getContractFactory("Product", owner);
-    const Order = await ethers.getContractFactory("Order", owner);
-    const ShoppingCart = await ethers.getContractFactory("ShoppingCart", owner);
     const Dappazon = await ethers.getContractFactory("Dappazon", owner);
 
     product = await Product.deploy();
-    order = await Order.deploy();
-    shoppingCart = await ShoppingCart.deploy(product.address);
     dappazon = await Dappazon.deploy(product.address, order.address, shoppingCart.address);
     
     const productData = { cost: 100, rating: 5, stock: 10 }
-
-    shoppingCartInfo = await util.safExecution(
-      () => shoppingCart.create(ownerAddress), 'ShoppingCartCreated').then(
-        result => result.id);
 
     productInfo1 = await util.safExecution(
       () => product.create(productData), 'ProductCreated')
 
     productInfo2 = await util.safExecution(
       () => product.create(productData), 'ProductCreated')
-
-    await shoppingCart.addProduct(ownerAddress, shoppingCartInfo, productInfo1.id, 2);
-    await shoppingCart.addProduct(ownerAddress, shoppingCartInfo, productInfo2.id, 3);
   });
 
   describe("Deployment", function () {
     it("Should set the right owner", async function () {
-      expect(await order.owner()).to.equal(owner.address);
       expect(await product.owner()).to.equal(owner.address);
-      expect(await shoppingCart.owner()).to.equal(owner.address);
       expect(await dappazon.owner()).to.equal(owner.address);
     });
   });
