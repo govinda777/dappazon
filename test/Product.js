@@ -144,39 +144,39 @@ describe("Product", function () {
     });
 
     it("Should update stock a product and emit event with correct data", async function () {
-      
+  
       const productData = { 
         cost: ethers.BigNumber.from(100), 
         rating: ethers.BigNumber.from(5), 
         stock: ethers.BigNumber.from(10) 
       }
-
-      await product.create(productData);
-
-      const productDataUpdateStock = { 
-        productId: ethers.BigNumber.from(1), 
-        cost: ethers.BigNumber.from(200), 
-        rating: ethers.BigNumber.from(5), 
-        quantity: ethers.BigNumber.from(2) 
-      }
-      
-      const receipt = await product.updateStock(productDataUpdateStock)
-      .then(tx => tx.wait());;
-      
-      // Procura pelo evento ProductCreated no recibo da transação
-      const shoppingCartProducts = util.getEvents(receipt, 'ProductUpdateStock').shoppingCartProducts;
     
-      expect(shoppingCartProducts["productId"] instanceof BigNumber)
-      expect(shoppingCartProducts["productId"]).to.equal(productDataUpdateStock.productId)
-      expect(util.isGreaterThan(shoppingCartProducts["quantity"], productDataUpdateStock.quantity))
-
-      const updatedProduct = await product.read(1);
-
+      // Criação do produto
+      const createTx = await product.create(productData);
+      const createReceipt = await createTx.wait();
+      const createdEvent = createReceipt.events.find(event => event.event === 'ProductCreated');
+      const productId = createdEvent.args.id;
+    
+      const quantityToReduce = 2;
+      
+      // Atualização do estoque
+      const updateTx = await product.updateStock(productId, quantityToReduce);
+      const updateReceipt = await updateTx.wait();
+    
+      // Procura pelo evento ProductUpdateStock no recibo da transação
+      const updateStockEvent = updateReceipt.events.find(event => event.event === 'ProductUpdateStock');
+    
+      expect(updateStockEvent.args.id).to.equal(productId);
+      expect(updateStockEvent.args.stock).to.equal(productData.stock.sub(quantityToReduce));
+    
+      // Verifica o produto atualizado
+      const updatedProduct = await product.read(productId);
+    
       expect(updatedProduct.cost).to.equal(productData.cost);
       expect(updatedProduct.rating).to.equal(productData.rating);
-      expect(updatedProduct.stock).to.equal(productData.stock - productDataUpdateStock.quantity);
+      expect(updatedProduct.stock).to.equal(productData.stock.sub(quantityToReduce));
     });
-
+    
     it("Should delete a product and emit event with correct data", async function () {
       await product.create({ cost: 100, rating: 5, stock: 10 });
       

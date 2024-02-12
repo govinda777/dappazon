@@ -67,7 +67,7 @@ contract Product is IProduct {
         require(productInfo.stock >= stock, "Insufficient stock");
         
         productInfo.stock -= stock;
-        emit ProductUpdateStock(productInfo.stock, _id);
+        emit ProductUpdateStock(_id, productInfo.stock);
         return true;
     }
 
