@@ -9,7 +9,6 @@ contract Dappazon {
     address public owner;
     IProduct public product;
     IOrder public order;
-    IShoppingCart public shoppingCart;
 
     event Buy(address buyer, uint256 orderId, uint256[] productIds);
     
@@ -27,7 +26,7 @@ contract Dappazon {
     }
     
     //0x17eDfB8a794ec4f13190401EF7aF1c17f3cc90c5
-    function buy(address _user, uint256 _shoppingCartId) public payable returns (uint256) {
+    function buy(address _user, uint256[] products) public payable returns (uint256) {
 
         IShoppingCart.model memory _shoppingCartInfo = shoppingCart.read(_user, _shoppingCartId);
         IItem.model[] memory _shoppingCartProducts = shoppingCart.readProducts(_user, _shoppingCartId);

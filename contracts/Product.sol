@@ -17,7 +17,7 @@ interface IProduct {
     function read(uint256 _id) external view returns (IProduct.model memory);
     function readAll() external view returns (uint256[] memory);
     function update(uint256 _id, IProduct.model memory _product) external;
-    function updateStock(uint256 _id, uint256 stock) external returns (IProduct.model memory);
+    function updateStock(uint256 _id, uint256 stock) external returns (bool);
     function del(uint256 _id) external;
 }
 
@@ -62,14 +62,12 @@ contract Product is IProduct {
     }
 
     function updateStock(uint256 _id, uint256 stock) external override returns (bool) {
-        uint256 productId = _id;
-        require(productId <= _productCount, "Product does not exist");
-
-        IProduct.model storage productInfo = _products[productId];
-        require(productInfo.stock >= _shoppingCartProduct.quantity, "Insufficient stock");
         
-        productInfo.stock -= _shoppingCartProduct.quantity;
-        emit ProductUpdateStock(productInfo.stock, _shoppingCartProduct);
+        IProduct.model storage productInfo = _products[_id];
+        require(productInfo.stock >= stock, "Insufficient stock");
+        
+        productInfo.stock -= stock;
+        emit ProductUpdateStock(productInfo.stock, _id);
         return true;
     }
 
