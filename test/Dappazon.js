@@ -3,14 +3,12 @@ const { expect } = require("chai");
 const util = require("./util");
 
 describe("Dappazon Contract", function () {
-  let dappazon, product, order;
+  let dappazon, product;
   let owner;
-  let ownerAddress;
   let productInfo1, productInfo2;
   
   beforeEach(async function () {
     [owner] = await ethers.getSigners();
-    ownerAddress = await owner.address;
 
     // Deploy the Product and Dappazon contracts
     const Product = await ethers.getContractFactory("Product", owner);
